@@ -46,40 +46,42 @@ export default function ProductPage({ params }) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Link href="/" className="text-blue-600 hover:text-blue-800 mb-6 inline-block">
-        ← Zurück zur Übersicht
-      </Link>
-      <div className="md:flex md:space-x-8">
-        <div className="md:w-1/2">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-          <p className="text-gray-600 mb-4">{product.description}</p>
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-2xl font-bold text-gray-900">{product.price.toFixed(2)} CHF</span>
-            <button
-              onClick={handleAddToCart}
-              className={`px-6 py-2 ${isInCart ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded focus:outline-none focus:shadow-outline`}
-              disabled={isInCart}
-            >
-              {isInCart ? 'Im Warenkorb' : 'In den Warenkorb'}
-            </button>
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <Link href="/" className="text-blue-600 hover:text-blue-800 mb-6 inline-block">
+          ← Zurück zur Übersicht
+        </Link>
+        <div className="md:flex md:space-x-8">
+          <div className="md:w-1/2">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
+            <p className="text-gray-600 mb-4">{product.description}</p>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-2xl font-bold text-gray-900">{product.price.toFixed(2)} CHF</span>
+              <button
+                onClick={handleAddToCart}
+                className={`px-6 py-2 ${isInCart ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded focus:outline-none focus:shadow-outline`}
+                disabled={isInCart}
+              >
+                {isInCart ? 'Im Warenkorb' : 'In den Warenkorb'}
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="md:w-1/2 mt-8 md:mt-0">
-          <div className="grid grid-cols-2 gap-4">
-            <Image
-              src={product.mainImage}
-              alt={`${product.name} - Hauptbild`}
-              width={500}
-              height={500}
-              className="w-full h-auto object-cover rounded"
-            />
-            <Image
-              src={product.secondaryImage}
-              alt={`${product.name} - Zusätzliches Bild`}
-              width={500}
-              height={500}
-              className="w-full h-auto object-cover rounded"
-            />
+          <div className="md:w-1/2 mt-8 md:mt-0">
+            <div className="grid grid-cols-2 gap-4">
+              <Image
+                src={product.mainImage}
+                alt={`${product.name} - Hauptbild`}
+                width={500}
+                height={500}
+                className="w-full h-auto object-cover rounded"
+              />
+              <Image
+                src={product.secondaryImage}
+                alt={`${product.name} - Zusätzliches Bild`}
+                width={500}
+                height={500}
+                className="w-full h-auto object-cover rounded"
+              />
+            </div>
           </div>
         </div>
       </div>

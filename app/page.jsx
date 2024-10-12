@@ -43,7 +43,7 @@ export default function Home() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map(product => (
-            <div key={product.id} className="border p-4 rounded shadow-md flex flex-col">
+            <div key={product.id} className="bg-white border p-4 rounded shadow-md flex flex-col">
               <Link href={`/product/${product.id}`} className="flex-grow">
                 <div className="w-full h-48 relative mb-4">
                   <Image

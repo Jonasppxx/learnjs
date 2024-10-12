@@ -11,7 +11,6 @@ export default function Cart() {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Prüfen, ob wir uns auf der Checkout-Seite befinden
   const isCheckoutPage = pathname === '/checkout';
 
   useEffect(() => {
@@ -34,7 +33,6 @@ export default function Cart() {
     router.push('/checkout');
   };
 
-  // Wenn wir auf der Checkout-Seite sind, zeigen wir den Cart nicht an
   if (isCheckoutPage) {
     return null;
   }
@@ -43,15 +41,12 @@ export default function Cart() {
     <div className="relative">
       <button
         onClick={toggleCart}
-        className="fixed top-4 right-4 z-50 bg-blue-500 text-white p-2 rounded-full shadow-lg"
+        className="bg-blue-500 text-white p-2 rounded-full shadow-lg"
       >
         🛒 {cart.length}
       </button>
       {isOpen && (
-        <div ref={cartRef} className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-50 p-4 overflow-y-auto">
-          <button onClick={closeCart} className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
-            ✕
-          </button>
+        <div ref={cartRef} className="absolute top-full right-0 mt-2 w-80 bg-white shadow-lg z-50 p-4 rounded-lg">
           <h2 className="text-2xl font-bold mb-4">Warenkorb</h2>
           {cart.length === 0 ? (
             <p>Ihr Warenkorb ist leer.</p>

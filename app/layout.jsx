@@ -1,6 +1,6 @@
 import './globals.css'
 import { CartProvider } from './CartContext'
-import Cart from './components/Cart'
+import Header from './components/Header'
 
 export const metadata = {
   title: 'Mein Online-Shop',
@@ -10,10 +10,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="de">
-      <body className="min-h-screen bg-gray-100">
+      <body>
         <CartProvider>
-          <Cart />
-          {children}
+          <Header />
+          <main className="content-wrapper">
+            {children}
+          </main>
         </CartProvider>
       </body>
     </html>
