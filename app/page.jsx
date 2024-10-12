@@ -59,7 +59,7 @@ export default function Home() {
               <p className="font-bold text-gray-800 mb-2">{product.price.toFixed(2)} CHF</p>
               <button
                 onClick={() => !isInCart(product.id) && addToCart(product)}
-                className={`px-4 py-2 rounded transition duration-300 ${
+                className={`w-full px-4 py-2 rounded transition duration-300 ${
                   isInCart(product.id)
                     ? 'bg-gray-500 text-white cursor-not-allowed'
                     : 'bg-blue-500 hover:bg-blue-600 text-white'
