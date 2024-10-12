@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Smartphone XYZ",
+    "price": 499.99,
+    "description": "Ein leistungsstarkes Smartphone mit hochauflösendem Display und fortschrittlicher Kamera."
+  },
+  {
+    "id": 2,
+    "name": "Laptop ABC",
+    "price": 899.99,
+    "description": "Ein schlanker und leistungsfähiger Laptop für Arbeit und Unterhaltung."
+  },
+  {
+    "id": 3,
+    "name": "Smartwatch 123",
+    "price": 199.99,
+    "description": "Eine elegante Smartwatch mit Fitness-Tracking und Benachrichtigungsfunktionen."
+  },
+  {
+    "id": 4,
+    "name": "Kopfhörer QWE",
+    "price": 149.99,
+    "description": "Kabellose Kopfhörer mit hervorragender Klangqualität und Geräuschunterdrückung."
+  },
+  {
+    "id": 5,
+    "name": "Tablet UIO",
+    "price": 349.99,
+    "description": "Ein vielseitiges Tablet mit großem Display, ideal für Unterhaltung und Produktivität."
+  }
+]
