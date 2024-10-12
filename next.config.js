@@ -6,6 +6,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Fügen Sie diese Zeile hinzu
+  experimental: { runtime: 'edge' },
 }
 
 module.exports = nextConfig
