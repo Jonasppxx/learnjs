@@ -53,7 +53,6 @@ export async function POST(req) {
           },
         },
       ],
-      customer_email: null, // Stripe wird die E-Mail-Adresse des Kunden erfassen
     });
 
     return NextResponse.json({ id: session.id });
