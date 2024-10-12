@@ -2,12 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  output: 'export',
-  images: {
-    unoptimized: true,
+  experimental: { 
+    runtime: 'edge',
+    serverComponents: true,
   },
-  // Fügen Sie diese Zeile hinzu
-  experimental: { runtime: 'edge' },
 }
 
 module.exports = nextConfig

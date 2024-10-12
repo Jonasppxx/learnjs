@@ -19,6 +19,7 @@ export default function Home() {
         return response.json();
       })
       .then(data => {
+        console.log('Geladene Produkte:', data);
         setProducts(data);
         setLoading(false);
       })
