@@ -39,7 +39,7 @@ export default function SearchResults() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-4">
-        {query && query.length > 1 ? `""` : ''}
+        {query && query.length > 1 ? `Suchergebnisse für "${query}"` : 'Alle Produkte'}
       </h1>
       {results.length === 0 ? (
         <p>Keine Ergebnisse gefunden.</p>
