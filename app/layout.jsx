@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
       <body>
         <CartProvider>
           <Header />
-          <main className="content-wrapper">
+          <main className="content-wrapper pt-16">
             {children}
           </main>
         </CartProvider>
