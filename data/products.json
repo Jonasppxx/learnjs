@@ -3,30 +3,40 @@
     "id": 1,
     "name": "Smartphone XYZ",
     "price": 499.99,
-    "description": "Ein leistungsstarkes Smartphone mit hochauflösendem Display und fortschrittlicher Kamera."
+    "description": "Ein leistungsstarkes Smartphone mit hochauflösendem Display und fortschrittlicher Kamera.",
+    "mainImage": "/images/smartphone-xyz-main.jpg",
+    "secondaryImage": "/images/smartphone-xyz-secondary.jpg"
   },
   {
     "id": 2,
     "name": "Laptop ABC",
     "price": 899.99,
-    "description": "Ein schlanker und leistungsfähiger Laptop für Arbeit und Unterhaltung."
+    "description": "Ein schlanker und leistungsfähiger Laptop für Arbeit und Unterhaltung.",
+    "mainImage": "/images/laptop-abc-main.jpg",
+    "secondaryImage": "/images/laptop-abc-secondary.jpg"
   },
   {
     "id": 3,
     "name": "Smartwatch 123",
     "price": 199.99,
-    "description": "Eine elegante Smartwatch mit Fitness-Tracking und Benachrichtigungsfunktionen."
+    "description": "Eine elegante Smartwatch mit Fitness-Tracking und Benachrichtigungsfunktionen.",
+    "mainImage": "/images/smartwatch-123-main.jpg",
+    "secondaryImage": "/images/smartwatch-123-secondary.jpg"
   },
   {
     "id": 4,
     "name": "Kopfhörer QWE",
     "price": 149.99,
-    "description": "Kabellose Kopfhörer mit hervorragender Klangqualität und Geräuschunterdrückung."
+    "description": "Kabellose Kopfhörer mit hervorragender Klangqualität und Geräuschunterdrückung.",
+    "mainImage": "/images/kopfhoerer-qwe-main.jpg",
+    "secondaryImage": "/images/kopfhoerer-qwe-secondary.jpg"
   },
   {
     "id": 5,
     "name": "Tablet UIO",
     "price": 349.99,
-    "description": "Ein vielseitiges Tablet mit großem Display, ideal für Unterhaltung und Produktivität."
+    "description": "Ein vielseitiges Tablet mit großem Display, ideal für Unterhaltung und Produktivität.",
+    "mainImage": "/images/tablet-uio-main.jpg",
+    "secondaryImage": "/images/tablet-uio-secondary.jpg"
   }
 ]

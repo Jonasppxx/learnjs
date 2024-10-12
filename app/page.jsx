@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -59,15 +60,25 @@ export default function Home() {
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map(product => (
-            <div key={product.id} className="border p-4 rounded shadow-md">
-              <h2 className="text-xl font-semibold text-gray-700">{product.name}</h2>
-              <p className="text-gray-600">{product.description}</p>
-              <p className="font-bold mt-2 text-gray-800">{product.price.toFixed(2)} €</p>
+            <div key={product.id} className="border p-4 rounded shadow-md flex flex-col">
+              <Link href={`/product/${product.id}`} className="flex-grow">
+                <div className="w-full h-48 relative mb-4">
+                  <Image
+                    src={product.mainImage}
+                    alt={product.name}
+                    layout="fill"
+                    objectFit="contain"
+                    className="rounded-lg"
+                  />
+                </div>
+                <h2 className="text-lg font-semibold text-gray-700 hover:text-blue-500 mb-2">{product.name}</h2>
+              </Link>
+              <p className="font-bold text-gray-800 mb-2">{product.price.toFixed(2)} CHF</p>
               <button
                 onClick={() => addToCart(product)}
-                className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition duration-300"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition duration-300"
                 disabled={cart.find(item => item.id === product.id)}
               >
                 {cart.find(item => item.id === product.id) ? 'Im Warenkorb' : 'Zum Warenkorb hinzufügen'}
@@ -86,7 +97,7 @@ export default function Home() {
             <div key={item.id} className="flex justify-between items-center border-b py-3">
               <span className="text-gray-700 font-medium">{item.name}</span>
               <div className="flex items-center">
-                <span className="text-gray-600 mr-4">{item.price.toFixed(2)} €</span>
+                <span className="text-gray-600 mr-4">{item.price.toFixed(2)} CHF</span>
                 <button
                   onClick={() => removeFromCart(item.id)}
                   className="text-red-500 hover:text-red-700 transition duration-300"
@@ -97,7 +108,7 @@ export default function Home() {
             </div>
           ))}
           <p className="font-bold mt-6 text-lg text-gray-800">
-            Gesamtsumme: {cart.reduce((sum, item) => sum + item.price, 0).toFixed(2)} €
+            Gesamtsumme: {cart.reduce((sum, item) => sum + item.price, 0).toFixed(2)} CHF
           </p>
           <Link 
             href="/checkout" 
