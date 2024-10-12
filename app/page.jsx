@@ -66,12 +66,23 @@ export default function Home() {
                 }`}
                 disabled={isInCart(product.id)}
               >
-                {isInCart(product.id) ? 'Im Warenkorb' : 'Zum Warenkorb hinzufügen'}
+                {isInCart(product.id) ? 'In cart' : 'Add to cart'}
               </button>
             </div>
           ))}
         </div>
       )}
+      
+      <footer className="mt-16 border-t pt-8">
+        <div className="flex justify-center space-x-8">
+          <Link href="/datenschutz" className="text-blue-500 hover:underline">Datenschutzerklärung</Link>
+          <Link href="/agb" className="text-blue-500 hover:underline">AGB</Link>
+          <Link href="/impressum" className="text-blue-500 hover:underline">Impressum</Link>
+        </div>
+        <div className="mt-8 text-center text-sm text-gray-500">
+          © 2024 Pokebuy. Alle Rechte vorbehalten.
+        </div>
+      </footer>
     </div>
   );
 }

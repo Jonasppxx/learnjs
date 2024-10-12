@@ -1,11 +1,11 @@
 [
   {
     "id": 1,
-    "name": "Smartphone XYZ",
+    "name": "Blastoise EX 200/165",
     "price": 499.99,
-    "description": "Ein leistungsstarkes Smartphone mit hochauflösendem Display und fortschrittlicher Kamera.",
-    "mainImage": "/images/smartphone-xyz-main.jpg",
-    "secondaryImage": "/images/smartphone-xyz-secondary.jpg"
+    "description": "Die Karte ist aus 151 und ist in einem sehr guten Zusstand.",
+    "mainImage": "/images/blastoise_f.jpg",
+    "secondaryImage": "/images/blastoise_b.jpg"
   },
   {
     "id": 2,
