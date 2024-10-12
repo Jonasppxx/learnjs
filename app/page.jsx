@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCart } from './CartContext';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { cart, addToCart } = useCart();
 
   useEffect(() => {
-    // Produkte laden
     fetch('/api/products')
       .then(response => {
         if (!response.ok) {
@@ -29,31 +29,12 @@ export default function Home() {
         setError('Fehler beim Laden der Produkte. Bitte versuchen Sie es später erneut.');
         setLoading(false);
       });
-
-    // Warenkorb aus dem localStorage laden
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
-    }
   }, []);
 
-  useEffect(() => {
-    // Warenkorb im localStorage speichern
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
-
-  const addToCart = (product) => {
-    if (!cart.find(item => item.id === product.id)) {
-      setCart([...cart, product]);
-    }
-  };
-
-  const removeFromCart = (productId) => {
-    setCart(cart.filter(item => item.id !== productId));
-  };
+  const isInCart = (productId) => cart.some(item => item.id === productId);
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-white shadow-lg rounded-lg my-8">
+    <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold my-8 text-gray-800">Produkte</h1>
       {loading ? (
         <p className="text-gray-600">Laden...</p>
@@ -77,45 +58,18 @@ export default function Home() {
               </Link>
               <p className="font-bold text-gray-800 mb-2">{product.price.toFixed(2)} CHF</p>
               <button
-                onClick={() => addToCart(product)}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition duration-300"
-                disabled={cart.find(item => item.id === product.id)}
+                onClick={() => !isInCart(product.id) && addToCart(product)}
+                className={`px-4 py-2 rounded transition duration-300 ${
+                  isInCart(product.id)
+                    ? 'bg-gray-500 text-white cursor-not-allowed'
+                    : 'bg-blue-500 hover:bg-blue-600 text-white'
+                }`}
+                disabled={isInCart(product.id)}
               >
-                {cart.find(item => item.id === product.id) ? 'Im Warenkorb' : 'Zum Warenkorb hinzufügen'}
+                {isInCart(product.id) ? 'Im Warenkorb' : 'Zum Warenkorb hinzufügen'}
               </button>
             </div>
           ))}
-        </div>
-      )}
-
-      <h2 className="text-2xl font-bold my-8 text-gray-800">Warenkorb</h2>
-      {cart.length === 0 ? (
-        <p className="text-gray-600">Ihr Warenkorb ist leer.</p>
-      ) : (
-        <div>
-          {cart.map(item => (
-            <div key={item.id} className="flex justify-between items-center border-b py-3">
-              <span className="text-gray-700 font-medium">{item.name}</span>
-              <div className="flex items-center">
-                <span className="text-gray-600 mr-4">{item.price.toFixed(2)} CHF</span>
-                <button
-                  onClick={() => removeFromCart(item.id)}
-                  className="text-red-500 hover:text-red-700 transition duration-300"
-                >
-                  Entfernen
-                </button>
-              </div>
-            </div>
-          ))}
-          <p className="font-bold mt-6 text-lg text-gray-800">
-            Gesamtsumme: {cart.reduce((sum, item) => sum + item.price, 0).toFixed(2)} CHF
-          </p>
-          <Link 
-            href="/checkout" 
-            className="inline-block mt-6 bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-lg transition duration-300"
-          >
-            Zur Kasse
-          </Link>
         </div>
       )}
     </div>
