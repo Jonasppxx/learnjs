@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function ThankYou() {
+function OrderDetails() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
@@ -36,8 +36,7 @@ export default function ThankYou() {
   }
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold my-8">Vielen Dank für Ihre Bestellung!</h1>
+    <div>
       <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
         <p className="font-bold">Bestellung erfolgreich abgeschlossen</p>
         <p>Ihre Transaktions-ID: {order.id}</p>
@@ -52,6 +51,17 @@ export default function ThankYou() {
       <p className="font-bold mt-4">
         Gesamtsumme: {(order.amount_total / 100).toFixed(2)} CHF
       </p>
+    </div>
+  );
+}
+
+export default function ThankYou() {
+  return (
+    <div className="container mx-auto px-4">
+      <h1 className="text-3xl font-bold my-8">Vielen Dank für Ihre Bestellung!</h1>
+      <Suspense fallback={<div>Laden...</div>}>
+        <OrderDetails />
+      </Suspense>
       <Link href="/" className="inline-block mt-8 bg-blue-500 text-white px-4 py-2 rounded">
         Zurück zur Startseite
       </Link>
