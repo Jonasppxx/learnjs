@@ -3,22 +3,7 @@
 @tailwind utilities;
 
 body {
-  background-image: url('/background.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.9); /* Erhöhen Sie den Alpha-Wert für mehr Transparenz */
-  z-index: -1;
+  background-color: #f3f4f6; /* Ein leichtes Grau als Hintergrundfarbe */
 }
 
 .content-wrapper {
