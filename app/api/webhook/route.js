@@ -18,12 +18,22 @@ export async function POST(req) {
     return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
   }
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-
-    // Hier können Sie die Bestellbestätigung per E-Mail senden
-    // Für dieses Beispiel verwenden wir console.log
-    console.log(`Bestellung bestätigt für ${session.customer_details.email}`);
+  // Handle the event
+  switch (event.type) {
+    case 'checkout.session.completed':
+      const session = event.data.object;
+      // Hier können Sie die Bestellung in Ihrer Datenbank speichern
+      console.log('Checkout completed:', session);
+      // Implementieren Sie hier Ihre Logik für erfolgreiche Bestellungen
+      break;
+    case 'payment_intent.succeeded':
+      const paymentIntent = event.data.object;
+      console.log('PaymentIntent was successful:', paymentIntent);
+      // Implementieren Sie hier Ihre Logik für erfolgreiche Zahlungen
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
   }
 
   return NextResponse.json({ received: true });
