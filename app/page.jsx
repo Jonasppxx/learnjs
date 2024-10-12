@@ -52,22 +52,22 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold my-8">Produkte</h1>
+    <div className="container mx-auto px-4 py-8 bg-white shadow-lg rounded-lg my-8">
+      <h1 className="text-3xl font-bold my-8 text-gray-800">Produkte</h1>
       {loading ? (
-        <p>Laden...</p>
+        <p className="text-gray-600">Laden...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map(product => (
-            <div key={product.id} className="border p-4 rounded">
-              <h2 className="text-xl font-semibold">{product.name}</h2>
-              <p>{product.description}</p>
-              <p className="font-bold mt-2">{product.price.toFixed(2)} €</p>
+            <div key={product.id} className="border p-4 rounded shadow-md">
+              <h2 className="text-xl font-semibold text-gray-700">{product.name}</h2>
+              <p className="text-gray-600">{product.description}</p>
+              <p className="font-bold mt-2 text-gray-800">{product.price.toFixed(2)} €</p>
               <button
                 onClick={() => addToCart(product)}
-                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+                className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition duration-300"
                 disabled={cart.find(item => item.id === product.id)}
               >
                 {cart.find(item => item.id === product.id) ? 'Im Warenkorb' : 'Zum Warenkorb hinzufügen'}
@@ -77,26 +77,32 @@ export default function Home() {
         </div>
       )}
 
-      <h2 className="text-2xl font-bold my-8">Warenkorb</h2>
+      <h2 className="text-2xl font-bold my-8 text-gray-800">Warenkorb</h2>
       {cart.length === 0 ? (
-        <p>Ihr Warenkorb ist leer.</p>
+        <p className="text-gray-600">Ihr Warenkorb ist leer.</p>
       ) : (
         <div>
           {cart.map(item => (
-            <div key={item.id} className="flex justify-between items-center border-b py-2">
-              <span>{item.name} - {item.price.toFixed(2)} €</span>
-              <button
-                onClick={() => removeFromCart(item.id)}
-                className="text-red-500"
-              >
-                Entfernen
-              </button>
+            <div key={item.id} className="flex justify-between items-center border-b py-3">
+              <span className="text-gray-700 font-medium">{item.name}</span>
+              <div className="flex items-center">
+                <span className="text-gray-600 mr-4">{item.price.toFixed(2)} €</span>
+                <button
+                  onClick={() => removeFromCart(item.id)}
+                  className="text-red-500 hover:text-red-700 transition duration-300"
+                >
+                  Entfernen
+                </button>
+              </div>
             </div>
           ))}
-          <p className="font-bold mt-4">
+          <p className="font-bold mt-6 text-lg text-gray-800">
             Gesamtsumme: {cart.reduce((sum, item) => sum + item.price, 0).toFixed(2)} €
           </p>
-          <Link href="/checkout" className="inline-block mt-4 bg-green-500 text-white px-4 py-2 rounded">
+          <Link 
+            href="/checkout" 
+            className="inline-block mt-6 bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-lg transition duration-300"
+          >
             Zur Kasse
           </Link>
         </div>

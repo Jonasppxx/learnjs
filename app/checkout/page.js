@@ -48,23 +48,23 @@ export default function Checkout() {
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold my-8">Checkout</h1>
+    <div className="container mx-auto px-4 py-8 bg-white shadow-lg rounded-lg my-8">
+      <h1 className="text-3xl font-bold my-8 text-gray-800">Checkout</h1>
       {cart.length === 0 ? (
-        <p>Ihr Warenkorb ist leer.</p>
+        <p className="text-gray-600">Ihr Warenkorb ist leer.</p>
       ) : (
         <div>
-          <h2 className="text-2xl font-bold mb-4">Warenkorb Übersicht</h2>
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">Warenkorb Übersicht</h2>
           {cart.map(item => (
             <div key={item.id} className="flex justify-between items-center border-b py-2">
-              <span>{item.name}</span>
-              <span>{item.price.toFixed(2)} CHF</span>
+              <span className="text-gray-700">{item.name}</span>
+              <span className="text-gray-700">{item.price.toFixed(2)} CHF</span>
             </div>
           ))}
-          <p className="font-bold mt-4">Gesamtsumme: {totalAmount} CHF</p>
+          <p className="font-bold mt-4 text-gray-800">Gesamtsumme: {totalAmount} CHF</p>
           <button
             onClick={handleCheckout}
-            className="mt-8 bg-blue-500 text-white px-4 py-2 rounded"
+            className="mt-8 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition duration-300"
           >
             Zur Kasse
           </button>
