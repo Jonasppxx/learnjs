@@ -265,38 +265,51 @@ function ProductSection({ title, products, type, addToCart, isInCart }) {
           </span>
         </Link>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {products.map(product => (
-          <div key={product.id} className="group relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-blue-500 hover:border-2">
-            <Link href={`/${type}/${product.id}`} className="block">
-              <div className="relative pt-[100%]">
-                <Image 
-                  src={product.main_image} 
-                  alt={product.name} 
-                  layout="fill" 
-                  objectFit="contain" 
-                  className="absolute top-0 left-0 w-full h-full p-2"
-                />
-              </div>
-              <div className="p-2 pb-4 absolute bottom-0 left-0 right-0 bg-white bg-opacity-80">
-                <h2 className="text-sm md:text-base font-semibold text-gray-800 truncate">{product.name}</h2>
-                <p className="text-sm text-gray-600 font-bold mt-1">{product.price.toFixed(2)} CHF</p>
-              </div>
-            </Link>
-            <button
-              onClick={() => addToCart(product, type)}
-              className={`absolute top-2 right-2 p-2 rounded-full ${
-                isInCart(product.id, type)
-                  ? 'bg-gray-500'
-                  : 'bg-blue-500 hover:bg-blue-600'
-              } text-white`}
-              disabled={isInCart(product.id, type)}
-            >
-              {isInCart(product.id, type) ? '✓' : '+'}
-            </button>
-          </div>
-        ))}
-      </div>
+      {products.length === 0 ? (
+        <div className="text-center py-12 bg-gray-100 rounded-lg">
+          <p className="text-2xl font-bold text-gray-600">Coming Soon</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          {products.map(product => (
+            <div key={product.id} className="group relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-blue-500 hover:border-2">
+              <Link href={`/${type}/${product.id}`} className="block">
+                <div className="relative pt-[100%]">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                  <Image 
+                    src={product.main_image} 
+                    alt={product.name} 
+                    layout="fill" 
+                    objectFit="contain" 
+                    className="absolute top-0 left-0 w-full h-full p-2"
+                    onLoadingComplete={(img) => {
+                      img.style.opacity = 1;
+                      img.previousElementSibling.style.display = 'none';
+                    }}
+                  />
+                </div>
+                <div className="p-2 pb-4 absolute bottom-0 left-0 right-0 bg-white bg-opacity-80">
+                  <h2 className="text-sm md:text-base font-semibold text-gray-800 truncate">{product.name}</h2>
+                  <p className="text-sm text-gray-600 font-bold mt-1">{product.price.toFixed(2)} CHF</p>
+                </div>
+              </Link>
+              <button
+                onClick={() => addToCart(product, type)}
+                className={`absolute top-2 right-2 p-2 rounded-full ${
+                  isInCart(product.id, type)
+                    ? 'bg-gray-500'
+                    : 'bg-blue-500 hover:bg-blue-600'
+                } text-white`}
+                disabled={isInCart(product.id, type)}
+              >
+                {isInCart(product.id, type) ? '✓' : '+'}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
