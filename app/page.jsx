@@ -133,7 +133,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow container mx-auto px-4 py-8">
-        <div className="mb-16"></div> {/* Reduzierter Abstand vor der Begrüßung */}
+        <div className="mb-16"></div>
         
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold transition-opacity duration-500">
@@ -206,7 +206,35 @@ export default function Home() {
         )}
       </div>
       
-      <footer className="mt-auto border-t pt-8 pb-4">
+      {/* Ricardo Link */}
+      <div className="bg-gray-100 py-4">
+        <div className="container mx-auto px-4">
+          <a 
+            href="https://www.ricardo.ch/de/shop/J0B0/offers/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="flex items-center justify-center bg-white border border-gray-300 rounded-lg px-6 py-3 hover:bg-gray-50 transition duration-300"
+          >
+            <Image 
+              src="/logo.png" 
+              alt="Pokebuy Logo" 
+              width={40} 
+              height={40} 
+              className="mr-3"
+            />
+            <span className="text-lg font-semibold mx-3">Besuchen Sie unseren Ricardo-Shop</span>
+            <Image 
+              src="/ricardo-logo.png" 
+              alt="Ricardo Logo" 
+              width={40} 
+              height={40} 
+              className="ml-3"
+            />
+          </a>
+        </div>
+      </div>
+
+      <footer className="border-t pt-8 pb-4">
         <div className="container mx-auto px-4">
           <div className="flex justify-center space-x-8">
             <Link href="/datenschutz" className="text-blue-500 hover:underline">Datenschutzerklärung</Link>
