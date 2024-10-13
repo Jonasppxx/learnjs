@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
+import Image from 'next/image';
+import Header from '../components/Header';
 
 // Stellen Sie sicher, dass Sie Ihren Stripe Public Key hier einfügen
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -48,28 +50,56 @@ export default function Checkout() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-white shadow-lg rounded-lg my-8">
-      <h1 className="text-3xl font-bold my-8 text-gray-800">Checkout</h1>
-      {cart.length === 0 ? (
-        <p className="text-gray-600">Ihr Warenkorb ist leer.</p>
-      ) : (
-        <div>
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Warenkorb Übersicht</h2>
-          {cart.map(item => (
-            <div key={item.id} className="flex justify-between items-center border-b py-2">
-              <span className="text-gray-700">{item.name}</span>
-              <span className="text-gray-700">{item.price.toFixed(2)} CHF</span>
+    <>
+      <Header hideSearch={true} />
+      <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-8">Checkout</h1>
+          {cart.length === 0 ? (
+            <div className="text-center py-12">
+              <Image
+                src="/images/empty-cart-pokemon.png"
+                alt="Leerer Warenkorb"
+                width={150}
+                height={150}
+                className="mx-auto mb-4"
+              />
+              <p className="text-xl text-gray-600">Ihr Warenkorb ist leer.</p>
             </div>
-          ))}
-          <p className="font-bold mt-4 text-gray-800">Gesamtsumme: {totalAmount} CHF</p>
-          <button
-            onClick={handleCheckout}
-            className="mt-8 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition duration-300"
-          >
-            Zur Kasse
-          </button>
+          ) : (
+            <div>
+              <h2 className="text-2xl font-bold mb-6 text-gray-800">Warenkorb Übersicht</h2>
+              <div className="space-y-4">
+                {cart.map(item => (
+                  <div key={item.id} className="flex justify-between items-center border-b border-gray-200 py-4">
+                    <div className="flex items-center">
+                      <Image
+                        src={item.main_image}
+                        alt={item.name}
+                        width={50}
+                        height={50}
+                        className="mr-4"
+                      />
+                      <span className="text-gray-700">{item.name}</span>
+                    </div>
+                    <span className="text-gray-700 font-semibold">{item.price.toFixed(2)} CHF</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-8 flex justify-between items-center">
+                <span className="text-2xl font-bold text-gray-800">Gesamtsumme:</span>
+                <span className="text-2xl font-bold text-gray-800">{totalAmount} CHF</span>
+              </div>
+              <button
+                onClick={handleCheckout}
+                className="mt-8 w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition duration-300 hover:bg-blue-700"
+              >
+                Zur Kasse
+              </button>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }
