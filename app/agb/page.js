@@ -2,22 +2,51 @@
 
 export default function AGB() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Allgemeine Geschäftsbedingungen (AGB)</h1>
-      <p className="text-base mb-4">
-        Name des Unternehmens: Pokebuy
-      </p>
-      <p className="text-base mb-4">
-        Der Autor übernimmt keine Gewähr für die Richtigkeit, Genauigkeit, Aktualität, Zuverlässigkeit und Vollständigkeit der Informationen. Haftungsansprüche gegen den Autor wegen Schäden materieller oder immaterieller Art, die aus dem Zugriff oder der Nutzung bzw. Nichtnutzung der veröffentlichten Informationen, durch Missbrauch der Verbindung oder durch technische Störungen entstanden sind, werden ausgeschlossen.
-      </p>
-      <p className="text-base mb-4">
-        Alle Angebote sind freibleibend. Der Autor behält es sich ausdrücklich vor, Teile der Seiten oder das gesamte Angebot ohne gesonderte Ankündigung zu verändern, zu ergänzen, zu löschen oder die Veröffentlichung zeitweise oder endgültig einzustellen.
-      </p>
-      <p className="text-base mb-4">
-        Verweise und Links auf Webseiten Dritter liegen ausserhalb unseres Verantwortungsbereichs. Es wird jegliche Verantwortung für solche Webseiten abgelehnt. Der Zugriff und die Nutzung solcher Webseiten erfolgen auf eigene Gefahr des jeweiligen Nutzers.
-      </p>
-      <p className="text-base mb-4">
-        Die Urheber- und alle anderen Rechte an Inhalten, Bildern, Fotos oder anderen Dateien auf dieser Website, gehören ausschliesslich Pokebuy oder den speziell genannten Rechteinhabern. Für die Reproduktion jeglicher Elemente ist die schriftliche Zustimmung des Urheberrechtsträgers im Voraus einzuholen.
+    <div className="container mx-auto px-4 py-8 mt-24">
+      <h1 className="text-3xl font-bold mb-6">Allgemeine Geschäftsbedingungen (AGB)</h1>
+      
+      <section className="mb-6">
+        <h2 className="text-2xl font-semibold mb-3">1. Geltungsbereich</h2>
+        <p>Diese AGB gelten für alle Bestellungen und Käufe, die über den Online-Shop von Pokebuy, 3123 Belp, Schweiz, getätigt werden.</p>
+      </section>
+
+      <section className="mb-6">
+        <h2 className="text-2xl font-semibold mb-3">2. Vertragsschluss</h2>
+        <p>Die Darstellung der Produkte im Online-Shop stellt kein rechtlich bindendes Angebot, sondern eine Aufforderung zur Bestellung dar. Durch Anklicken des Buttons "Kaufen" geben Sie eine verbindliche Bestellung ab. Der Kaufvertrag kommt zustande, wenn wir Ihre Bestellung durch eine Auftragsbestätigung per E-Mail unmittelbar nach dem Erhalt Ihrer Bestellung annehmen.</p>
+      </section>
+
+      <section className="mb-6">
+        <h2 className="text-2xl font-semibold mb-3">3. Preise und Zahlung</h2>
+        <p>Alle Preise sind in Schweizer Franken (CHF) angegeben und verstehen sich inklusive der gesetzlichen Mehrwertsteuer. Die Zahlung erfolgt per Kreditkarte oder andere angebotene Zahlungsmethoden.</p>
+      </section>
+
+      <section className="mb-6">
+        <h2 className="text-2xl font-semibold mb-3">4. Lieferung</h2>
+        <p>Die Lieferung erfolgt innerhalb der Schweiz. Die Lieferzeit beträgt in der Regel 3-5 Werktage. Bei Verzögerungen werden wir Sie umgehend informieren.</p>
+      </section>
+
+      <section className="mb-6">
+        <h2 className="text-2xl font-semibold mb-3">5. Widerrufsrecht</h2>
+        <p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag, an dem Sie oder ein von Ihnen benannter Dritter, der nicht der Beförderer ist, die Waren in Besitz genommen haben bzw. hat.</p>
+      </section>
+
+      <section className="mb-6">
+        <h2 className="text-2xl font-semibold mb-3">6. Gewährleistung</h2>
+        <p>Es gelten die gesetzlichen Gewährleistungsrechte.</p>
+      </section>
+
+      <section className="mb-6">
+        <h2 className="text-2xl font-semibold mb-3">7. Datenschutz</h2>
+        <p>Wir verarbeiten Ihre personenbezogenen Daten gemäß unserer Datenschutzerklärung.</p>
+      </section>
+
+      <section className="mb-6">
+        <h2 className="text-2xl font-semibold mb-3">8. Anwendbares Recht und Gerichtsstand</h2>
+        <p>Es gilt schweizerisches Recht unter Ausschluss des UN-Kaufrechts. Gerichtsstand ist Belp, Schweiz.</p>
+      </section>
+
+      <p className="mt-8 text-sm text-gray-600">
+        Stand: 1. März 2024
       </p>
     </div>
   );

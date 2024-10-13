@@ -2,25 +2,37 @@
 
 export default function Datenschutz() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 mt-24">
       <h1 className="text-3xl font-bold mb-4">Datenschutzerklärung</h1>
       <p className="text-lg mb-6">
-        Letzte Aktualisierung: 1. September 2024
+        Letzte Aktualisierung: 1. März 2024
       </p>
       <p className="text-base mb-6">
-        Willkommen bei Pokebuy! Der Schutz Ihrer persönlichen Daten ist uns ein wichtiges Anliegen. Diese Datenschutzerklärung erläutert, wie wir Informationen sammeln, verwenden und schützen, wenn Sie unsere Website www.pokebuy.ch besuchen oder unsere Dienste nutzen.
+        Willkommen bei Pokebuy, Ihrem vertrauenswürdigen Pokémon-Karten-Shop in Belp, Bern. Der Schutz Ihrer persönlichen Daten hat für uns höchste Priorität. In dieser Datenschutzerklärung möchten wir Sie darüber informieren, wie wir mit Ihren Daten umgehen und welche Rechte Sie haben.
       </p>
       <p className="text-base mb-6">
-        Wir behalten uns das Recht vor, diese Datenschutzerklärung jederzeit zu ändern, um sie an rechtliche Anforderungen oder Änderungen unserer Dienstleistungen anzupassen. Bitte überprüfen Sie diese Seite regelmäßig, um über Aktualisierungen informiert zu bleiben.
+        <strong>1. Verantwortliche Stelle:</strong> Pokebuy, Bahnhofstrasse 10, 3123 Belp, Schweiz
       </p>
       <p className="text-base mb-6">
-        <strong>Erhebung und Nutzung von Daten:</strong> Wir erfassen personenbezogene Daten, die Sie uns freiwillig zur Verfügung stellen, wie z.B. Ihren Namen, Ihre E-Mail-Adresse und Zahlungsinformationen, um Bestellungen zu bearbeiten und Ihnen einen reibungslosen Service zu bieten. Darüber hinaus sammeln wir automatisch Daten über Ihre Nutzung unserer Website, um unsere Dienste zu verbessern.
+        <strong>2. Datenerhebung und -verwendung:</strong> Wir erheben nur die Daten, die für die Abwicklung Ihrer Bestellungen und die Verbesserung unseres Services notwendig sind. Dazu gehören Name, Adresse, E-Mail und Zahlungsinformationen. Diese Daten werden ausschließlich zur Bestellabwicklung und Kundenbetreuung verwendet.
       </p>
       <p className="text-base mb-6">
-        <strong>Datensicherheit:</strong> Wir setzen technische und organisatorische Sicherheitsmaßnahmen ein, um Ihre Daten vor unbefugtem Zugriff und Missbrauch zu schützen. Dennoch weisen wir darauf hin, dass die Datenübertragung im Internet Sicherheitslücken aufweisen kann.
+        <strong>3. Datenspeicherung:</strong> Ihre Daten werden auf sicheren Servern in der Schweiz gespeichert und nicht an Dritte weitergegeben, es sei denn, dies ist für die Bestellabwicklung erforderlich (z.B. an Versanddienstleister).
       </p>
       <p className="text-base mb-6">
-        <strong>Kontakt:</strong> Bei Fragen oder Anliegen zu dieser Datenschutzerklärung oder zur Verarbeitung Ihrer persönlichen Daten können Sie uns jederzeit unter pokebuy@gmail.com kontaktieren oder uns an unserer Adresse schreiben: Grossmatt 4, 4616 Kappel, Schweiz.
+        <strong>4. Ihre Rechte:</strong> Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer Daten. Kontaktieren Sie uns bei Fragen oder Anliegen.
+      </p>
+      <p className="text-base mb-6">
+        <strong>5. Datensicherheit:</strong> Wir setzen modernste Sicherheitsmaßnahmen ein, um Ihre Daten vor unbefugtem Zugriff zu schützen. Trotzdem möchten wir Sie darauf hinweisen, dass die Datenübertragung im Internet nie 100% sicher sein kann.
+      </p>
+      <p className="text-base mb-6">
+        <strong>6. Cookies:</strong> Unsere Website verwendet Cookies, um Ihnen ein optimales Einkaufserlebnis zu bieten. Sie können Ihren Browser so einstellen, dass er Sie über das Setzen von Cookies informiert.
+      </p>
+      <p className="text-base mb-6">
+        <strong>7. Änderungen:</strong> Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf zu aktualisieren. Bitte überprüfen Sie diese Seite regelmäßig auf Änderungen.
+      </p>
+      <p className="text-base mb-6">
+        <strong>Kontakt:</strong> Bei Fragen zur Verarbeitung Ihrer persönlichen Daten kontaktieren Sie uns bitte unter pokebuy@gmail.com oder schriftlich an unsere Geschäftsadresse.
       </p>
     </div>
   );
