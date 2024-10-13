@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase';
+import { useCart } from './CartContext';
 
 const pokemonQuotes = [
   "Ich wähle dich!",
@@ -33,6 +34,8 @@ export default function Home() {
     "Bienvenue à Pokebuy",
     "Bienvenido a Pokebuy",
   ];
+
+  const { addToCart, isInCart } = useCart();
 
   useEffect(() => {
     const handleResize = () => {
@@ -168,8 +171,8 @@ export default function Home() {
           </div>
         )}
         
-        <ProductSection title="Singles" products={singles} type="singles" />
-        <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" />
+        <ProductSection title="Singles" products={singles} type="singles" addToCart={addToCart} isInCart={isInCart} />
+        <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" addToCart={addToCart} isInCart={isInCart} />
 
         {expensiveCard && (
           <div className="mt-16">
@@ -219,7 +222,7 @@ export default function Home() {
   );
 }
 
-function ProductSection({ title, products, type }) {
+function ProductSection({ title, products, type, addToCart, isInCart }) {
   return (
     <section className="mb-12">
       <div className="flex justify-between items-center mb-4">
@@ -234,22 +237,35 @@ function ProductSection({ title, products, type }) {
           </span>
         </Link>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {products.map(product => (
-          <div key={product.id} className="group border border-transparent hover:border-blue-500 transition-all duration-300 p-2 rounded">
+          <div key={product.id} className="group relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-blue-500 hover:border-2">
             <Link href={`/${type}/${product.id}`} className="block">
-              <div className="relative w-full h-48 mb-2">
+              <div className="relative pt-[100%]">
                 <Image 
                   src={product.main_image} 
                   alt={product.name} 
                   layout="fill" 
                   objectFit="contain" 
-                  className="transition-transform duration-300 group-hover:scale-105"
+                  className="absolute top-0 left-0 w-full h-full p-2"
                 />
               </div>
-              <h3 className="text-lg font-semibold mb-1 group-hover:text-blue-500 transition-colors duration-300">{product.name}</h3>
-              <p className="text-gray-600 font-bold">{product.price.toFixed(2)} CHF</p>
+              <div className="p-2 pb-4 absolute bottom-0 left-0 right-0 bg-white bg-opacity-80">
+                <h2 className="text-sm md:text-base font-semibold text-gray-800 truncate">{product.name}</h2>
+                <p className="text-sm text-gray-600 font-bold mt-1">{product.price.toFixed(2)} CHF</p>
+              </div>
             </Link>
+            <button
+              onClick={() => addToCart(product, type)}
+              className={`absolute top-2 right-2 p-2 rounded-full ${
+                isInCart(product.id, type)
+                  ? 'bg-gray-500'
+                  : 'bg-blue-500 hover:bg-blue-600'
+              } text-white`}
+              disabled={isInCart(product.id, type)}
+            >
+              {isInCart(product.id, type) ? '✓' : '+'}
+            </button>
           </div>
         ))}
       </div>
