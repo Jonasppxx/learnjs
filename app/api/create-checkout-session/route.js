@@ -36,7 +36,7 @@ export async function POST(req) {
           shipping_rate_data: {
             type: 'fixed_amount',
             fixed_amount: {
-              amount: 900,
+              amount: 0,
               currency: 'chf',
             },
             display_name: 'Standard-Versand',
