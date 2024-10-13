@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import Image from 'next/image';
 import Header from '../components/Header';
+import { useRouter } from 'next/navigation';
 
 // Stellen Sie sicher, dass Sie Ihren Stripe Public Key hier einfügen
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 export default function Checkout() {
   const [cart, setCart] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
@@ -49,12 +51,24 @@ export default function Checkout() {
     }
   };
 
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
     <>
-      <Header hideSearch={true} />
+      <Header hideSearch={true} hideCart={true} />
       <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-8">Checkout</h1>
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-extrabold text-gray-900">Checkout</h1>
+            <button
+              onClick={handleGoBack}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition duration-300"
+            >
+              Zurück
+            </button>
+          </div>
           {cart.length === 0 ? (
             <div className="text-center py-12">
               <Image
