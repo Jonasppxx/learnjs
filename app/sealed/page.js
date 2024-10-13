@@ -35,34 +35,59 @@ export default function SealedProducts() {
     fetchProducts();
   }, []);
 
-  if (loading) return <p>Laden...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p className="text-center py-4 mt-16">Laden...</p>;
+  if (error) return <p className="text-center py-4 mt-16 text-red-500">{error}</p>;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Sealed Products</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map(product => (
-          <div key={product.id} className="group border border-transparent hover:border-blue-500 transition-all duration-300 p-2 rounded">
-            <Link href={`/sealed/${product.id}`} className="block">
-              <Image src={product.main_image} alt={product.name} width={200} height={200} className="w-full h-48 object-contain mb-2" />
-              <h2 className="text-lg font-semibold mb-1">{product.name}</h2>
-              <p className="text-gray-600 mb-2">{product.price.toFixed(2)} CHF</p>
-            </Link>
-            <button
-              onClick={() => addToCart(product, 'sealed')}
-              className={`w-full px-4 py-2 rounded ${
-                isInCart(product.id, 'sealed')
-                  ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-blue-500 hover:bg-blue-600'
-              } text-white`}
-              disabled={isInCart(product.id, 'sealed')}
-            >
-              {isInCart(product.id, 'sealed') ? 'Im Warenkorb' : 'In den Warenkorb'}
-            </button>
-          </div>
-        ))}
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-grow container mx-auto px-4 py-8 mt-16">
+        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-gray-800">Sealed Products</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {products.map(product => (
+            <div key={product.id} className="group relative">
+              <Link href={`/sealed/${product.id}`} className="block">
+                <div className="relative w-full pt-[133%] bg-gradient-to-br from-yellow-100 to-red-100 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 group-hover:scale-105">
+                  <Image 
+                    src={product.main_image} 
+                    alt={product.name} 
+                    layout="fill" 
+                    objectFit="contain" 
+                    className="absolute top-0 left-0 w-full h-full p-4"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-80 p-2">
+                    <h2 className="text-base md:text-lg font-semibold text-gray-800 truncate">{product.name}</h2>
+                    <p className="text-sm md:text-base text-gray-600 font-bold mt-1">{product.price.toFixed(2)} CHF</p>
+                  </div>
+                </div>
+              </Link>
+              <button
+                onClick={() => addToCart(product, 'sealed')}
+                className={`absolute top-2 right-2 p-2 rounded-full ${
+                  isInCart(product.id, 'sealed')
+                    ? 'bg-gray-500'
+                    : 'bg-blue-500 hover:bg-blue-600'
+                } text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                disabled={isInCart(product.id, 'sealed')}
+              >
+                {isInCart(product.id, 'sealed') ? '✓' : '+'}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
+
+      <footer className="mt-auto border-t pt-8 pb-4">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-center space-x-8">
+            <Link href="/datenschutz" className="text-blue-500 hover:underline">Datenschutzerklärung</Link>
+            <Link href="/agb" className="text-blue-500 hover:underline">AGB</Link>
+            <Link href="/impressum" className="text-blue-500 hover:underline">Impressum</Link>
+          </div>
+          <div className="mt-8 text-center text-sm text-gray-500">
+            © 2024 Pokebuy. Alle Rechte vorbehalten.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

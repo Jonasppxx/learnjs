@@ -42,9 +42,9 @@ export default function SealedProductPage({ params }) {
     fetchProduct();
   }, [params.id]);
 
-  if (loading) return <p className="text-center text-xl mt-8">Laden...</p>;
-  if (error) return <p className="text-center text-xl mt-8 text-red-500">{error}</p>;
-  if (!product) return <p className="text-center text-xl mt-8">Produkt nicht gefunden</p>;
+  if (loading) return <p className="text-center text-xl mt-24">Laden...</p>;
+  if (error) return <p className="text-center text-xl mt-24 text-red-500">{error}</p>;
+  if (!product) return <p className="text-center text-xl mt-24">Produkt nicht gefunden</p>;
 
   const handleAddToCart = () => {
     if (!isInCart(product.id, 'sealed')) {
@@ -53,52 +53,45 @@ export default function SealedProductPage({ params }) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <Link href="/sealed" className="text-blue-600 hover:text-blue-800 mb-6 inline-block">
-          ← Zurück zu Sealed Products
-        </Link>
-        <div className="md:flex md:space-x-8">
-          <div className="md:w-1/2">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-            <p className="text-gray-600 mb-4">{product.description}</p>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-2xl font-bold text-gray-900">{product.price.toFixed(2)} CHF</span>
-              <button
-                onClick={handleAddToCart}
-                className={`px-6 py-2 ${isInCart(product.id, 'sealed') ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded focus:outline-none focus:shadow-outline`}
-                disabled={isInCart(product.id, 'sealed')}
-              >
-                {isInCart(product.id, 'sealed') ? 'Im Warenkorb' : 'In den Warenkorb'}
-              </button>
-            </div>
-            <p className="text-gray-600">Verfügbar: {product.stock}</p>
+    <div className="container mx-auto px-4 py-8 mt-16">
+      <Link href="/sealed" className="text-blue-600 hover:text-blue-800 mb-6 inline-block">
+        ← Zurück zu Sealed Products
+      </Link>
+      <div className="md:flex md:space-x-8 mt-8">
+        <div className="md:w-1/2 mb-8 md:mb-0">
+          <div className="relative aspect-[3/4] rounded-lg overflow-hidden shadow-lg">
+            <Image
+              src={product.main_image}
+              alt={`${product.name} - Hauptbild`}
+              layout="fill"
+              objectFit="contain"
+              priority
+            />
           </div>
-          <div className="md:w-1/2 mt-8 md:mt-0">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="relative aspect-square rounded">
-                <Image
-                  src={product.main_image}
-                  alt={`${product.name} - Hauptbild`}
-                  layout="fill"
-                  objectFit="contain"
-                  className="rounded"
-                  priority
-                />
-              </div>
-              {product.secondary_image && (
-                <div className="relative aspect-square rounded">
-                  <Image
-                    src={product.secondary_image}
-                    alt={`${product.name} - Zusätzliches Bild`}
-                    layout="fill"
-                    objectFit="contain"
-                    className="rounded"
-                    priority
-                  />
-                </div>
-              )}
+          {product.secondary_image && (
+            <div className="relative aspect-[3/4] mt-4 rounded-lg overflow-hidden shadow-lg">
+              <Image
+                src={product.secondary_image}
+                alt={`${product.name} - Zusätzliches Bild`}
+                layout="fill"
+                objectFit="contain"
+                priority
+              />
             </div>
+          )}
+        </div>
+        <div className="md:w-1/2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
+          <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
+          <div className="flex items-center justify-between mb-6">
+            <span className="text-3xl font-bold text-gray-900">{product.price.toFixed(2)} CHF</span>
+            <button
+              onClick={handleAddToCart}
+              className={`px-6 py-3 ${isInCart(product.id, 'sealed') ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-300`}
+              disabled={isInCart(product.id, 'sealed')}
+            >
+              {isInCart(product.id, 'sealed') ? 'Im Warenkorb' : 'In den Warenkorb'}
+            </button>
           </div>
         </div>
       </div>
