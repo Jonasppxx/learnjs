@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase';
@@ -13,31 +13,75 @@ const pokemonQuotes = [
   "Träume groß, trainiere hart!",
 ];
 
+const cardProperties = [
+  "Seltenheit", "Angriffsstärke", "Verteidigung", "Spezialfähigkeit", "Sammlerwert"
+];
+
 export default function Home() {
   const [singles, setSingles] = useState([]);
   const [sealedProducts, setSealedProducts] = useState([]);
   const [featuredCard, setFeaturedCard] = useState(null);
+  const [expensiveCard, setExpensiveCard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [productsPerRow, setProductsPerRow] = useState(4);
+  const [welcomeIndex, setWelcomeIndex] = useState(0);
+  const expensiveCardRef = useRef(null);
+  const welcomeMessages = [
+    "Willkommen bei Pokebuy",
+    "ようこそ Pokebuy", // Japanisch
+    "Welcome to Pokebuy",
+    "Bienvenue à Pokebuy",
+    "Bienvenido a Pokebuy",
+  ];
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setProductsPerRow(1);
-      } else if (window.innerWidth < 768) {
-        setProductsPerRow(2);
-      } else if (window.innerWidth < 1024) {
-        setProductsPerRow(3);
-      } else {
-        setProductsPerRow(4);
+      if (window.innerWidth < 640) setProductsPerRow(1);
+      else if (window.innerWidth < 768) setProductsPerRow(2);
+      else if (window.innerWidth < 1024) setProductsPerRow(3);
+      else setProductsPerRow(4);
+    };
+
+    const handleScroll = () => {
+      if (expensiveCardRef.current) {
+        const rect = expensiveCardRef.current.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const cardHeight = rect.height;
+        const cardTop = rect.top;
+        
+        // Berechne den Prozentsatz, wie weit die Karte im Viewport ist
+        const visiblePercentage = Math.max(0, Math.min(100, (viewportHeight - cardTop) / (viewportHeight + cardHeight) * 100));
+        
+        // Beginne die Drehung erst, wenn die Karte zu 20% sichtbar ist
+        const rotationThreshold = 20;
+        const maxRotation = 180;
+        
+        let rotation = 0;
+        if (visiblePercentage > rotationThreshold) {
+          rotation = ((visiblePercentage - rotationThreshold) / (100 - rotationThreshold)) * maxRotation;
+        }
+        
+        rotation = Math.min(maxRotation, Math.max(0, rotation));
+        expensiveCardRef.current.style.transform = `rotateY(${rotation}deg)`;
       }
     };
 
     handleResize();
     window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', handleScroll);
 
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWelcomeIndex((prevIndex) => (prevIndex + 1) % welcomeMessages.length);
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -79,8 +123,22 @@ export default function Home() {
         setFeaturedCard({
           ...randomProduct,
           quote: randomQuote,
-          progress: Math.floor(Math.random() * 100)
+          properties: cardProperties.reduce((acc, prop) => {
+            acc[prop] = Math.floor(Math.random() * 100);
+            return acc;
+          }, {})
         });
+
+        // Fetch the most expensive card
+        const { data: expensiveData, error: expensiveError } = await supabase
+          .from('singles')
+          .select('*')
+          .order('price', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (expensiveError) throw expensiveError;
+        setExpensiveCard(expensiveData);
 
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -99,7 +157,17 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold my-8 text-gray-800">Willkommen bei Pokebuy</h1>
+        <div className="mb-24"></div> {/* Abstand vor der Begrüßung */}
+        
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold transition-opacity duration-500">
+            {welcomeMessages[welcomeIndex].split(' ').map((word, index) => (
+              <span key={index} className={index === welcomeMessages[welcomeIndex].split(' ').length - 1 ? "bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text" : ""}>
+                {word}{' '}
+              </span>
+            ))}
+          </h1>
+        </div>
         
         {featuredCard && (
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg p-6 mb-8">
@@ -118,10 +186,10 @@ export default function Home() {
                 <h2 className="text-2xl font-bold mb-2">{featuredCard.name}</h2>
                 <p className="text-lg italic mb-4">"{featuredCard.quote}"</p>
                 <p className="mb-4">{featuredCard.description}</p>
-                <div className="w-full bg-white rounded-full h-2.5 dark:bg-gray-700 mb-4">
-                  <div className="bg-yellow-400 h-2.5 rounded-full" style={{width: `${featuredCard.progress}%`}}></div>
-                </div>
-                <p className="text-sm">Beliebtheit: {featuredCard.progress}%</p>
+                <p className="text-xl font-bold mb-4">{featuredCard.price.toFixed(2)} CHF</p>
+                <Link href={`/singles/${featuredCard.id}`} className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-2 px-4 rounded transition duration-300">
+                  Produkt ansehen
+                </Link>
               </div>
             </div>
           </div>
@@ -129,6 +197,46 @@ export default function Home() {
         
         <ProductSection title="Singles" products={singles} type="singles" />
         <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" />
+
+        {expensiveCard && (
+          <div className="mt-16">
+            <h2 className="text-3xl font-bold mb-6 text-center">Unsere Empfehlung</h2>
+            <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg shadow-lg p-6">
+              <div className="flex flex-col md:flex-row items-center">
+                <div className="w-full md:w-1/3 mb-4 md:mb-0">
+                  <div ref={expensiveCardRef} className="relative w-48 h-64 mx-auto transition-transform duration-500 perspective-1000" style={{ transformStyle: 'preserve-3d' }}>
+                    <div className="absolute w-full h-full backface-hidden">
+                      <Image 
+                        src={expensiveCard.main_image} 
+                        alt={expensiveCard.name} 
+                        layout="fill" 
+                        objectFit="contain" 
+                        className="rounded-lg"
+                      />
+                    </div>
+                    <div className="absolute w-full h-full backface-hidden" style={{ transform: 'rotateY(180deg)' }}>
+                      <Image 
+                        src={expensiveCard.secondary_image || expensiveCard.main_image} 
+                        alt={`${expensiveCard.name} (Rückseite)`} 
+                        layout="fill" 
+                        objectFit="contain" 
+                        className="rounded-lg"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full md:w-2/3 md:pl-6">
+                  <h3 className="text-2xl font-bold mb-2">{expensiveCard.name}</h3>
+                  <p className="mb-4">{expensiveCard.description}</p>
+                  <p className="text-xl font-bold mb-4">{expensiveCard.price.toFixed(2)} CHF</p>
+                  <Link href={`/singles/${expensiveCard.id}`} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+                    Produkt ansehen
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       
       <footer className="mt-auto border-t pt-8 pb-4">
