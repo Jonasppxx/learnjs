@@ -6,32 +6,47 @@ import { supabase } from '../../lib/supabase';
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
-  const [products, setProducts] = useState([]);
-  const [newProduct, setNewProduct] = useState({ name: '', description: '', price: '', main_image: '', secondary_image: '' });
+  const [singles, setSingles] = useState([]);
+  const [sealedProducts, setSealedProducts] = useState([]);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    description: '',
+    price: '',
+    main_image: '',
+    secondary_image: '',
+    type: 'singles'
+  });
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (isAuthenticated) {
+      fetchProducts();
+    }
+  }, [isAuthenticated]);
 
   async function fetchProducts() {
-    const { data, error } = await supabase.from('products').select('*');
-    if (error) console.error('Error fetching products:', error);
-    else setProducts(data);
+    const { data: singlesData, error: singlesError } = await supabase.from('singles').select('*');
+    if (singlesError) console.error('Error fetching singles:', singlesError);
+    else setSingles(singlesData);
+
+    const { data: sealedData, error: sealedError } = await supabase.from('sealed_products').select('*');
+    if (sealedError) console.error('Error fetching sealed products:', sealedError);
+    else setSealedProducts(sealedData);
   }
 
   async function addProduct(e) {
     e.preventDefault();
-    const { data, error } = await supabase.from('products').insert([newProduct]);
-    if (error) console.error('Error adding product:', error);
+    const { type, ...productData } = newProduct;
+    const { data, error } = await supabase.from(type).insert([productData]);
+    if (error) console.error(`Error adding ${type}:`, error);
     else {
-      setNewProduct({ name: '', description: '', price: '', main_image: '', secondary_image: '' });
+      setNewProduct({ name: '', description: '', price: '', main_image: '', secondary_image: '', type: 'singles' });
       fetchProducts();
     }
   }
 
-  async function removeProduct(id) {
-    const { error } = await supabase.from('products').delete().match({ id });
-    if (error) console.error('Error removing product:', error);
+  async function removeProduct(id, type) {
+    const { error } = await supabase.from(type).delete().match({ id });
+    if (error) console.error(`Error removing ${type}:`, error);
     else fetchProducts();
   }
 
@@ -75,61 +90,95 @@ export default function AdminPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
       
-      <form onSubmit={addProduct} className="mb-8">
-        <input
-          type="text"
-          placeholder="Name"
-          value={newProduct.name}
-          onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
-          className="border p-2 mr-2"
-        />
-        <input
-          type="text"
-          placeholder="Description"
-          value={newProduct.description}
-          onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
-          className="border p-2 mr-2"
-        />
-        <input
-          type="number"
-          placeholder="Price"
-          value={newProduct.price}
-          onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
-          className="border p-2 mr-2"
-        />
-        <input
-          type="text"
-          placeholder="Main Image URL"
-          value={newProduct.main_image}
-          onChange={(e) => setNewProduct({...newProduct, main_image: e.target.value})}
-          className="border p-2 mr-2"
-        />
-        <input
-          type="text"
-          placeholder="Secondary Image URL"
-          value={newProduct.secondary_image}
-          onChange={(e) => setNewProduct({...newProduct, secondary_image: e.target.value})}
-          className="border p-2 mr-2"
-        />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded">Add Product</button>
+      <form onSubmit={addProduct} className="mb-8 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            type="text"
+            placeholder="Name"
+            value={newProduct.name}
+            onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+            className="w-full border rounded p-2"
+          />
+          <input
+            type="text"
+            placeholder="Description"
+            value={newProduct.description}
+            onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
+            className="w-full border rounded p-2"
+          />
+          <input
+            type="number"
+            placeholder="Price"
+            value={newProduct.price}
+            onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+            className="w-full border rounded p-2"
+          />
+          <input
+            type="text"
+            placeholder="Main Image URL"
+            value={newProduct.main_image}
+            onChange={(e) => setNewProduct({...newProduct, main_image: e.target.value})}
+            className="w-full border rounded p-2"
+          />
+          <input
+            type="text"
+            placeholder="Secondary Image URL"
+            value={newProduct.secondary_image}
+            onChange={(e) => setNewProduct({...newProduct, secondary_image: e.target.value})}
+            className="w-full border rounded p-2"
+          />
+          <select
+            value={newProduct.type}
+            onChange={(e) => setNewProduct({...newProduct, type: e.target.value})}
+            className="w-full border rounded p-2"
+          >
+            <option value="singles">Singles</option>
+            <option value="sealed_products">Sealed Products</option>
+          </select>
+        </div>
+        <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors">Add Product</button>
       </form>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {products.map(product => (
-          <div key={product.id} className="border p-4 rounded">
-            <h2 className="text-xl font-bold">{product.name}</h2>
-            <p>{product.description}</p>
-            <p>Price: {product.price} CHF</p>
-            <button 
-              onClick={() => removeProduct(product.id)}
-              className="bg-red-500 text-white p-2 rounded mt-2"
-            >
-              Remove
-            </button>
+      <div className="space-y-8">
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Singles</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {singles.map(product => (
+              <div key={product.id} className="border p-4 rounded shadow">
+                <h3 className="text-xl font-bold">{product.name}</h3>
+                <p className="text-gray-600">{product.description}</p>
+                <p className="font-semibold mt-2">Price: {product.price} CHF</p>
+                <button 
+                  onClick={() => removeProduct(product.id, 'singles')}
+                  className="bg-red-500 text-white p-2 rounded mt-2 hover:bg-red-600 transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Sealed Products</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {sealedProducts.map(product => (
+              <div key={product.id} className="border p-4 rounded shadow">
+                <h3 className="text-xl font-bold">{product.name}</h3>
+                <p className="text-gray-600">{product.description}</p>
+                <p className="font-semibold mt-2">Price: {product.price} CHF</p>
+                <button 
+                  onClick={() => removeProduct(product.id, 'sealed_products')}
+                  className="bg-red-500 text-white p-2 rounded mt-2 hover:bg-red-600 transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

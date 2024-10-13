@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { supabase } from '../../lib/supabase';
 
 function SearchResults() {
   const [results, setResults] = useState([]);
@@ -14,20 +15,41 @@ function SearchResults() {
   useEffect(() => {
     if (query) {
       setLoading(true);
-      fetch('/api/products')
-        .then(res => res.json())
-        .then(products => {
-          const filteredProducts = products.filter(product => 
-            product.name.toLowerCase().includes(query.toLowerCase()) ||
-            product.description.toLowerCase().includes(query.toLowerCase())
-          );
-          setResults(filteredProducts);
-          setLoading(false);
-        })
-        .catch(error => {
+      const fetchProducts = async () => {
+        try {
+          // Fetch singles
+          const { data: singles, error: singlesError } = await supabase
+            .from('singles')
+            .select('*')
+            .ilike('name', `%${query}%`)
+            .or(`description.ilike.%${query}%`);
+
+          if (singlesError) throw singlesError;
+
+          // Fetch sealed products
+          const { data: sealedProducts, error: sealedError } = await supabase
+            .from('sealed_products')
+            .select('*')
+            .ilike('name', `%${query}%`)
+            .or(`description.ilike.%${query}%`);
+
+          if (sealedError) throw sealedError;
+
+          // Combine and set results
+          const combinedResults = [
+            ...singles.map(item => ({ ...item, type: 'singles' })),
+            ...sealedProducts.map(item => ({ ...item, type: 'sealed' }))
+          ];
+
+          setResults(combinedResults);
+        } catch (error) {
           console.error('Error fetching products:', error);
+        } finally {
           setLoading(false);
-        });
+        }
+      };
+
+      fetchProducts();
     } else {
       setResults([]);
       setLoading(false);
@@ -46,11 +68,11 @@ function SearchResults() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {results.map(product => (
-            <Link href={`/product/${product.id}`} key={product.id} className="block">
-              <div className="bg-white border rounded-lg p-4 hover:shadow-lg transition-shadow">
+            <Link href={`/${product.type}/${product.id}`} key={`${product.type}-${product.id}`} className="block group border border-transparent hover:border-blue-500 transition-all duration-300 p-2 rounded">
+              <div className="bg-white p-4 rounded-lg hover:shadow-lg transition-shadow">
                 <div className="relative w-full h-48 mb-4">
                   <Image
-                    src={product.mainImage}
+                    src={product.main_image}
                     alt={product.name}
                     layout="fill"
                     objectFit="contain"
@@ -59,6 +81,7 @@ function SearchResults() {
                 </div>
                 <h2 className="text-lg font-semibold text-gray-700">{product.name}</h2>
                 <p className="mt-1 text-lg font-medium text-gray-900">{product.price.toFixed(2)} CHF</p>
+                <p className="mt-1 text-sm text-gray-500">{product.type === 'singles' ? 'Single' : 'Sealed Product'}</p>
               </div>
             </Link>
           ))}

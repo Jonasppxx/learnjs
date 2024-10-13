@@ -43,12 +43,12 @@ export default function Singles() {
       <h1 className="text-3xl font-bold mb-8">Singles</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map(product => (
-          <div key={product.id} className="border p-4 rounded-lg shadow-md">
-            <Link href={`/product/${product.id}`}>
-              <Image src={product.main_image} alt={product.name} width={200} height={200} className="w-full h-48 object-contain mb-4" />
-              <h2 className="text-lg font-semibold mb-2">{product.name}</h2>
+          <div key={product.id} className="group border border-transparent hover:border-blue-500 transition-all duration-300 p-2 rounded">
+            <Link href={`/singles/${product.id}`} className="block">
+              <Image src={product.main_image} alt={product.name} width={200} height={200} className="w-full h-48 object-contain mb-2" />
+              <h2 className="text-lg font-semibold mb-1">{product.name}</h2>
+              <p className="text-gray-600 mb-2">{product.price.toFixed(2)} CHF</p>
             </Link>
-            <p className="text-gray-600 mb-2">{product.price.toFixed(2)} CHF</p>
             <button
               onClick={() => addToCart(product, 'singles')}
               className={`w-full px-4 py-2 rounded ${
