@@ -222,14 +222,7 @@ export default function Home() {
               height={40} 
               className="mr-3"
             />
-            <span className="text-lg font-semibold mx-3">Besuchen Sie unseren Ricardo-Shop</span>
-            <Image 
-              src="/ricardo-logo.png" 
-              alt="Ricardo Logo" 
-              width={40} 
-              height={40} 
-              className="ml-3"
-            />
+            <span className="text-lg font-semibold">Besuchen Sie unseren Ricardo-Shop</span>
           </a>
         </div>
       </div>
