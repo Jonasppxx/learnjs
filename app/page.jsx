@@ -151,11 +151,11 @@ export default function Home() {
                   alt={featuredCard.name} 
                   width={200} 
                   height={200} 
-                  className="rounded-lg"
+                  className="rounded-lg mx-auto"
                   objectFit="contain"
                 />
               </div>
-              <div className="w-full md:w-2/3 md:pl-6">
+              <div className="w-full md:w-2/3 md:pl-6 text-center md:text-left">
                 <h2 className="text-2xl font-bold mb-2">{featuredCard.name}</h2>
                 <p className="text-lg italic mb-4">"{featuredCard.quote}"</p>
                 <p className="mb-4">{featuredCard.description}</p>
@@ -189,7 +189,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <div className="w-full md:w-2/3 md:pl-6">
+                <div className="w-full md:w-2/3 md:pl-6 text-center md:text-left">
                   <h3 className="text-2xl font-bold mb-2">{expensiveCard.name}</h3>
                   <p className="mb-4">{expensiveCard.description}</p>
                   <p className="text-xl font-bold mb-4">{expensiveCard.price.toFixed(2)} CHF</p>
