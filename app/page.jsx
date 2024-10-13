@@ -12,15 +12,14 @@ export default function Home() {
   const [error, setError] = useState(null);
   const { cart, addToCart, isOpen } = useCart();
   const observer = useRef();
-  const productObservers = useRef({});
+  const productRefs = useRef({});
 
   const lastProductElementRef = useCallback(node => {
     if (loading) return;
     if (observer.current) observer.current.disconnect();
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && visibleProducts.length < products.length) {
-        const newProducts = products.slice(visibleProducts.length, visibleProducts.length + 4);
-        setVisibleProducts(prev => [...prev, ...newProducts]);
+        setVisibleProducts(prev => [...prev, products[prev.length]]);
       }
     });
     if (node) observer.current.observe(node);
@@ -35,10 +34,10 @@ export default function Home() {
             productObserver.unobserve(node);
           }
         },
-        { threshold: 0.1 }
+        { threshold: 0.1, rootMargin: '100px' }
       );
       productObserver.observe(node);
-      productObservers.current[node.dataset.productId] = productObserver;
+      productRefs.current[node.dataset.productId] = productObserver;
     }
   }, []);
 
@@ -63,7 +62,7 @@ export default function Home() {
       });
 
     return () => {
-      Object.values(productObservers.current).forEach(observer => observer.disconnect());
+      Object.values(productRefs.current).forEach(observer => observer.disconnect());
     };
   }, []);
 
@@ -80,11 +79,11 @@ export default function Home() {
       <div className="flex-grow container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold my-8 text-gray-800">Produkte</h1>
         {loading ? (
-          <p className="text-gray-600"></p>
+          <div className="h-[calc(100vh-300px)]"></div> // Platzhalter für Ladezeit
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-h-[calc(100vh-300px)]">
             {visibleProducts.map((product, index) => (
               <div 
                 key={product.id} 
@@ -107,9 +106,10 @@ export default function Home() {
                       layout="fill"
                       objectFit="contain"
                       className="rounded-lg"
-                      priority={index < 4}
-                      quality={75} // Reduzierte Qualität auf 50%
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Optimiert für verschiedene Bildschirmgrößen
+                      quality={50}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      placeholder="blur"
+                      blurDataURL={`data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="transparent"/></svg>')}`}
                     />
                   </div>
                   <h2 className="text-lg font-semibold text-gray-700 hover:text-blue-500 mb-2">{product.name}</h2>

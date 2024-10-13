@@ -67,22 +67,32 @@ export default function ProductPage({ params }) {
           </div>
           <div className="md:w-1/2 mt-8 md:mt-0">
             <div className="grid grid-cols-2 gap-4">
-              <Image
-                src={product.mainImage}
-                alt={`${product.name} - Hauptbild`}
-                width={500}
-                height={500}
-                className="w-full h-auto object-cover rounded"
-                quality={90} // Volle Qualität
-              />
-              <Image
-                src={product.secondaryImage}
-                alt={`${product.name} - Zusätzliches Bild`}
-                width={500}
-                height={500}
-                className="w-full h-auto object-cover rounded"
-                quality={90} // Volle Qualität
-              />
+              <div className="relative aspect-square rounded">
+                <Image
+                  src={product.mainImage}
+                  alt={`${product.name} - Hauptbild`}
+                  layout="fill"
+                  objectFit="contain"
+                  className="rounded"
+                  priority
+                  quality={90}
+                  placeholder="blur"
+                  blurDataURL={`data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500"><rect width="500" height="500" fill="transparent"/></svg>')}`}
+                />
+              </div>
+              <div className="relative aspect-square rounded">
+                <Image
+                  src={product.secondaryImage}
+                  alt={`${product.name} - Zusätzliches Bild`}
+                  layout="fill"
+                  objectFit="contain"
+                  className="rounded"
+                  priority
+                  quality={90}
+                  placeholder="blur"
+                  blurDataURL={`data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500"><rect width="500" height="500" fill="transparent"/></svg>')}`}
+                />
+              </div>
             </div>
           </div>
         </div>
