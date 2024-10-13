@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase';
@@ -26,7 +26,6 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [productsPerRow, setProductsPerRow] = useState(4);
   const [welcomeIndex, setWelcomeIndex] = useState(0);
-  const expensiveCardRef = useRef(null);
   const welcomeMessages = [
     "Willkommen bei Pokebuy",
     "ようこそ Pokebuy", // Japanisch
@@ -43,37 +42,11 @@ export default function Home() {
       else setProductsPerRow(4);
     };
 
-    const handleScroll = () => {
-      if (expensiveCardRef.current) {
-        const rect = expensiveCardRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const cardHeight = rect.height;
-        const cardTop = rect.top;
-        
-        // Berechne den Prozentsatz, wie weit die Karte im Viewport ist
-        const visiblePercentage = Math.max(0, Math.min(100, (viewportHeight - cardTop) / (viewportHeight + cardHeight) * 100));
-        
-        // Beginne die Drehung erst, wenn die Karte zu 20% sichtbar ist
-        const rotationThreshold = 20;
-        const maxRotation = 180;
-        
-        let rotation = 0;
-        if (visiblePercentage > rotationThreshold) {
-          rotation = ((visiblePercentage - rotationThreshold) / (100 - rotationThreshold)) * maxRotation;
-        }
-        
-        rotation = Math.min(maxRotation, Math.max(0, rotation));
-        expensiveCardRef.current.style.transform = `rotateY(${rotation}deg)`;
-      }
-    };
-
     handleResize();
     window.addEventListener('resize', handleResize);
-    window.addEventListener('scroll', handleScroll);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -157,7 +130,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow container mx-auto px-4 py-8">
-        <div className="mb-24"></div> {/* Abstand vor der Begrüßung */}
+        <div className="mb-16"></div> {/* Reduzierter Abstand vor der Begrüßung */}
         
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold transition-opacity duration-500">
@@ -204,20 +177,11 @@ export default function Home() {
             <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg shadow-lg p-6">
               <div className="flex flex-col md:flex-row items-center">
                 <div className="w-full md:w-1/3 mb-4 md:mb-0">
-                  <div ref={expensiveCardRef} className="relative w-48 h-64 mx-auto transition-transform duration-500 perspective-1000" style={{ transformStyle: 'preserve-3d' }}>
-                    <div className="absolute w-full h-full backface-hidden">
+                  <div className="relative w-48 h-64 mx-auto perspective-1000">
+                    <div className="w-full h-full transition-transform duration-300 transform-style-3d hover:rotate-y-10 hover:scale-105">
                       <Image 
                         src={expensiveCard.main_image} 
                         alt={expensiveCard.name} 
-                        layout="fill" 
-                        objectFit="contain" 
-                        className="rounded-lg"
-                      />
-                    </div>
-                    <div className="absolute w-full h-full backface-hidden" style={{ transform: 'rotateY(180deg)' }}>
-                      <Image 
-                        src={expensiveCard.secondary_image || expensiveCard.main_image} 
-                        alt={`${expensiveCard.name} (Rückseite)`} 
                         layout="fill" 
                         objectFit="contain" 
                         className="rounded-lg"
@@ -260,8 +224,14 @@ function ProductSection({ title, products, type }) {
     <section className="mb-12">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">{title}</h2>
-        <Link href={`/${type}`} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-          Mehr anzeigen
+        <Link 
+          href={`/${type}`} 
+          className="group flex items-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+        >
+          <span className="mr-2">Mehr anzeigen</span>
+          <span className="text-xl transform transition-transform duration-300 group-hover:translate-x-1">
+            →
+          </span>
         </Link>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

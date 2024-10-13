@@ -25,8 +25,29 @@ module.exports = {
       },
       animation: {
         'fade-in-up': 'fade-in-up 0.3s ease-out forwards'
-      }
+      },
+      perspective: {
+        '1000': '1000px',
+      },
+      rotate: {
+        'y-10': '10deg',
+      },
     },
   },
-  plugins: [],
+  variants: {
+    extend: {
+      scale: ['hover', 'group-hover'],
+      rotate: ['hover', 'group-hover'],
+    },
+  },
+  plugins: [
+    function({ addUtilities }) {
+      const newUtilities = {
+        '.transform-style-3d': {
+          'transform-style': 'preserve-3d',
+        },
+      }
+      addUtilities(newUtilities, ['responsive', 'hover'])
+    }
+  ],
 };
