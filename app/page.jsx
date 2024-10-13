@@ -5,9 +5,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase';
 
+const pokemonQuotes = [
+  "Ich wähle dich!",
+  "Schnapp sie dir alle!",
+  "Entwickle dich weiter!",
+  "Werde der allerbeste!",
+  "Träume groß, trainiere hart!",
+];
+
 export default function Home() {
   const [singles, setSingles] = useState([]);
   const [sealedProducts, setSealedProducts] = useState([]);
+  const [featuredCard, setFeaturedCard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [productsPerRow, setProductsPerRow] = useState(4);
@@ -56,6 +65,23 @@ export default function Home() {
         if (sealedError) throw sealedError;
         setSealedProducts(sealedData);
 
+        // Fetch a random product for the featured card
+        const { data: allProducts, error: allProductsError } = await supabase
+          .from('singles')
+          .select('*')
+          .limit(100);
+
+        if (allProductsError) throw allProductsError;
+
+        const randomProduct = allProducts[Math.floor(Math.random() * allProducts.length)];
+        const randomQuote = pokemonQuotes[Math.floor(Math.random() * pokemonQuotes.length)];
+        
+        setFeaturedCard({
+          ...randomProduct,
+          quote: randomQuote,
+          progress: Math.floor(Math.random() * 100)
+        });
+
       } catch (error) {
         console.error('Error fetching products:', error);
         setError('Fehler beim Laden der Produkte. Bitte versuchen Sie es später erneut.');
@@ -75,45 +101,34 @@ export default function Home() {
       <div className="flex-grow container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold my-8 text-gray-800">Willkommen bei Pokebuy</h1>
         
-        <section className="mb-12">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Singles</h2>
-            <Link href="/singles" className="text-blue-500 hover:underline">
-              Mehr anzeigen
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {singles.map(product => (
-              <div key={product.id} className="group border border-transparent hover:border-blue-500 transition-all duration-300 p-2 rounded">
-                <Link href={`/singles/${product.id}`} className="block">
-                  <Image src={product.main_image} alt={product.name} width={200} height={200} className="w-full h-48 object-contain mb-2" />
-                  <h3 className="text-lg font-semibold mb-1">{product.name}</h3>
-                  <p className="text-gray-600">{product.price.toFixed(2)} CHF</p>
-                </Link>
+        {featuredCard && (
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg p-6 mb-8">
+            <div className="flex flex-col md:flex-row items-center">
+              <div className="w-full md:w-1/3 mb-4 md:mb-0">
+                <Image 
+                  src={featuredCard.main_image} 
+                  alt={featuredCard.name} 
+                  width={200} 
+                  height={200} 
+                  className="rounded-lg"
+                  objectFit="contain"
+                />
               </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mb-12">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Sealed Products</h2>
-            <Link href="/sealed" className="text-blue-500 hover:underline">
-              Mehr anzeigen
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {sealedProducts.map(product => (
-              <div key={product.id} className="group border border-transparent hover:border-blue-500 transition-all duration-300 p-2 rounded">
-                <Link href={`/sealed/${product.id}`} className="block">
-                  <Image src={product.main_image} alt={product.name} width={200} height={200} className="w-full h-48 object-contain mb-2" />
-                  <h3 className="text-lg font-semibold mb-1">{product.name}</h3>
-                  <p className="text-gray-600">{product.price.toFixed(2)} CHF</p>
-                </Link>
+              <div className="w-full md:w-2/3 md:pl-6">
+                <h2 className="text-2xl font-bold mb-2">{featuredCard.name}</h2>
+                <p className="text-lg italic mb-4">"{featuredCard.quote}"</p>
+                <p className="mb-4">{featuredCard.description}</p>
+                <div className="w-full bg-white rounded-full h-2.5 dark:bg-gray-700 mb-4">
+                  <div className="bg-yellow-400 h-2.5 rounded-full" style={{width: `${featuredCard.progress}%`}}></div>
+                </div>
+                <p className="text-sm">Beliebtheit: {featuredCard.progress}%</p>
               </div>
-            ))}
+            </div>
           </div>
-        </section>
+        )}
+        
+        <ProductSection title="Singles" products={singles} type="singles" />
+        <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" />
       </div>
       
       <footer className="mt-auto border-t pt-8 pb-4">
@@ -129,5 +144,37 @@ export default function Home() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function ProductSection({ title, products, type }) {
+  return (
+    <section className="mb-12">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">{title}</h2>
+        <Link href={`/${type}`} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+          Mehr anzeigen
+        </Link>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map(product => (
+          <div key={product.id} className="group border border-transparent hover:border-blue-500 transition-all duration-300 p-2 rounded">
+            <Link href={`/${type}/${product.id}`} className="block">
+              <div className="relative w-full h-48 mb-2">
+                <Image 
+                  src={product.main_image} 
+                  alt={product.name} 
+                  layout="fill" 
+                  objectFit="contain" 
+                  className="transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+              <h3 className="text-lg font-semibold mb-1 group-hover:text-blue-500 transition-colors duration-300">{product.name}</h3>
+              <p className="text-gray-600 font-bold">{product.price.toFixed(2)} CHF</p>
+            </Link>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
