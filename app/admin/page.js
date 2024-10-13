@@ -31,6 +31,8 @@ export default function AdminPage() {
   async function addProducts() {
     for (let product of newProducts) {
       const { type, ...productData } = product;
+      // Konvertiere den Preis in eine Zahl
+      productData.price = parseFloat(productData.price);
       const { data, error } = await supabase.from(type).insert([productData]);
       if (error) console.error(`Error adding ${type}:`, error);
     }
@@ -85,9 +87,14 @@ export default function AdminPage() {
     reader.onload = (e) => {
       const content = e.target.result;
       const lines = content.split('\n');
+      const headers = lines[0].split(',');
       const newProducts = lines.slice(1).map(line => {
-        const [name, description, price, main_image, secondary_image, type] = line.split(',');
-        return { name, description, price: parseFloat(price), main_image, secondary_image, type };
+        const values = line.split(',');
+        const product = {};
+        headers.forEach((header, index) => {
+          product[header.trim()] = values[index] ? values[index].trim() : '';
+        });
+        return product;
       });
       setNewProducts(newProducts);
     };
@@ -129,7 +136,7 @@ export default function AdminPage() {
       
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4">Add New Products</h2>
-        <input type="file" onChange={handleFileUpload} className="mb-4" />
+        <input type="file" onChange={handleFileUpload} accept=".csv" className="mb-4" />
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
             <thead>
