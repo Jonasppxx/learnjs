@@ -68,6 +68,9 @@ export default function ProductPage({ params }) {
           <div className="md:w-1/2 mt-8 md:mt-0">
             <div className="grid grid-cols-2 gap-4">
               <div className="relative aspect-square rounded">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
                 <Image
                   src={product.mainImage}
                   alt={`${product.name} - Hauptbild`}
@@ -75,12 +78,17 @@ export default function ProductPage({ params }) {
                   objectFit="contain"
                   className="rounded"
                   priority
-                  quality={90}
-                  placeholder="blur"
-                  blurDataURL={`data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500"><rect width="500" height="500" fill="transparent"/></svg>')}`}
+                  onLoadingComplete={(img) => {
+                    img.style.opacity = 1;
+                    img.previousSibling.style.display = 'none';
+                  }}
+                  style={{ opacity: 0, transition: 'opacity 0.3s' }}
                 />
               </div>
               <div className="relative aspect-square rounded">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
                 <Image
                   src={product.secondaryImage}
                   alt={`${product.name} - Zusätzliches Bild`}
@@ -88,9 +96,11 @@ export default function ProductPage({ params }) {
                   objectFit="contain"
                   className="rounded"
                   priority
-                  quality={90}
-                  placeholder="blur"
-                  blurDataURL={`data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500"><rect width="500" height="500" fill="transparent"/></svg>')}`}
+                  onLoadingComplete={(img) => {
+                    img.style.opacity = 1;
+                    img.previousSibling.style.display = 'none';
+                  }}
+                  style={{ opacity: 0, transition: 'opacity 0.3s' }}
                 />
               </div>
             </div>

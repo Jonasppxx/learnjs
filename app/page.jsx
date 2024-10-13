@@ -30,11 +30,12 @@ export default function Home() {
       const productObserver = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            node.classList.add('animate-fade-in-up');
+            node.style.opacity = '1';
+            node.style.transform = 'translateY(0)';
             productObserver.unobserve(node);
           }
         },
-        { threshold: 0.1, rootMargin: '100px' }
+        { threshold: 0.1, rootMargin: '50px' }
       );
       productObserver.observe(node);
       productRefs.current[node.dataset.productId] = productObserver;
@@ -92,24 +93,34 @@ export default function Home() {
                   if (index === visibleProducts.length - 1) lastProductElementRef(node);
                 }}
                 data-product-id={product.id}
-                className="flex flex-col p-2 rounded-lg transition-all duration-300 hover:shadow-[0_0_0_1px_#3B82F6] opacity-0"
+                className="flex flex-col p-2 rounded-lg transition-all duration-500 ease-out hover:shadow-[0_0_0_1px_#3B82F6]"
+                style={{
+                  opacity: 0,
+                  transform: 'translateY(20px)',
+                }}
               >
                 <Link 
                   href={`/product/${product.id}`} 
                   className="flex-grow"
                   onClick={handleProductClick}
                 >
-                  <div className="w-full h-48 relative mb-4 rounded-lg overflow-hidden">
+                  <div className="w-full h-48 relative mb-4 rounded-lg overflow-hidden bg-gray-100">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
                     <Image
                       src={product.mainImage}
                       alt={product.name}
                       layout="fill"
                       objectFit="contain"
                       className="rounded-lg"
-                      quality={50}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      placeholder="blur"
-                      blurDataURL={`data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="transparent"/></svg>')}`}
+                      priority
+                      loading="eager"
+                      onLoadingComplete={(img) => {
+                        img.style.opacity = 1;
+                        img.previousSibling.style.display = 'none';
+                      }}
+                      style={{ opacity: 0, transition: 'opacity 0.3s' }}
                     />
                   </div>
                   <h2 className="text-lg font-semibold text-gray-700 hover:text-blue-500 mb-2">{product.name}</h2>
