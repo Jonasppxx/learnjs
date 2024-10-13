@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '../../lib/supabase';
@@ -11,61 +11,90 @@ function SearchResults() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const query = searchParams.get('q');
+  const origin = searchParams.get('origin') || 'singles'; // Default to 'singles' if not specified
   const { addToCart, isInCart } = useCart();
 
   useEffect(() => {
-    if (query) {
-      setLoading(true);
-      const fetchProducts = async () => {
-        try {
-          // Fetch singles
-          const { data: singles, error: singlesError } = await supabase
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        let singles, sealedProducts;
+
+        if (query) {
+          // Fetch filtered results if there's a query
+          const { data: filteredSingles, error: singlesError } = await supabase
             .from('singles')
             .select('*')
             .ilike('name', `%${query}%`)
             .or(`description.ilike.%${query}%`);
 
-          if (singlesError) throw singlesError;
-
-          // Fetch sealed products
-          const { data: sealedProducts, error: sealedError } = await supabase
+          const { data: filteredSealed, error: sealedError } = await supabase
             .from('sealed_products')
             .select('*')
             .ilike('name', `%${query}%`)
             .or(`description.ilike.%${query}%`);
 
+          if (singlesError) throw singlesError;
           if (sealedError) throw sealedError;
 
-          // Combine and set results
-          const combinedResults = [
-            ...singles.map(item => ({ ...item, type: 'singles' })),
-            ...sealedProducts.map(item => ({ ...item, type: 'sealed' }))
-          ];
+          singles = filteredSingles;
+          sealedProducts = filteredSealed;
+        } else {
+          // Fetch all products if there's no query
+          const { data: allSingles, error: singlesError } = await supabase
+            .from('singles')
+            .select('*');
 
-          setResults(combinedResults);
-        } catch (error) {
-          console.error('Error fetching products:', error);
-        } finally {
-          setLoading(false);
+          const { data: allSealed, error: sealedError } = await supabase
+            .from('sealed_products')
+            .select('*');
+
+          if (singlesError) throw singlesError;
+          if (sealedError) throw sealedError;
+
+          singles = allSingles;
+          sealedProducts = allSealed;
         }
-      };
 
-      fetchProducts();
-    } else {
-      setResults([]);
-      setLoading(false);
-    }
+        // Combine and set results
+        const combinedResults = [
+          ...singles.map(item => ({ ...item, type: 'singles' })),
+          ...sealedProducts.map(item => ({ ...item, type: 'sealed' }))
+        ];
+
+        setResults(combinedResults);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
   }, [query]);
 
-  if (loading) return <p className="text-center py-4 mt-16">Suche läuft...</p>;
+  const handleReset = () => {
+    router.push(`/${origin}`);
+  };
+
+  if (loading) return <p className="text-center py-4 mt-16">Laden...</p>;
 
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow container mx-auto px-4 py-8 mt-16">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-gray-800">
-          {query && query.length > 1 ? `Suchergebnisse für "${query}"` : 'Alle Produkte'}
-        </h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+            {query ? `Suchergebnisse für "${query}"` : 'Alle Produkte'}
+          </h1>
+          <button
+            onClick={handleReset}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
+          >
+            Zurück zu {origin === 'singles' ? 'Singles' : 'Sealed Products'}
+          </button>
+        </div>
         {results.length === 0 ? (
           <p className="text-center">Keine Ergebnisse gefunden.</p>
         ) : (
