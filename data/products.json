@@ -78,5 +78,61 @@
     "description": "Ein vielseitiges Tablet mit großem Display, ideal für Unterhaltung und Produktivität.",
     "mainImage": "/images/smartphone-xyz-main.jpg",
     "secondaryImage": "/images/smartphone-xyz-secondary.jpg"
+  },
+  {
+    "id": 11,
+    "name": "Tablet UIO",
+    "price": 349.99,
+    "description": "Ein vielseitiges Tablet mit großem Display, ideal für Unterhaltung und Produktivität.",
+    "mainImage": "/images/smartphone-xyz-main.jpg",
+    "secondaryImage": "/images/smartphone-xyz-secondary.jpg"
+  },
+  {
+    "id": 12,
+    "name": "Tablet UIO",
+    "price": 349.99,
+    "description": "Ein vielseitiges Tablet mit großem Display, ideal für Unterhaltung und Produktivität.",
+    "mainImage": "/images/smartphone-xyz-main.jpg",
+    "secondaryImage": "/images/smartphone-xyz-secondary.jpg"
+  },
+  {
+    "id": 13,
+    "name": "Tablet UIO",
+    "price": 349.99,
+    "description": "Ein vielseitiges Tablet mit großem Display, ideal für Unterhaltung und Produktivität.",
+    "mainImage": "/images/smartphone-xyz-main.jpg",
+    "secondaryImage": "/images/smartphone-xyz-secondary.jpg"
+  },
+  {
+    "id": 14,
+    "name": "Tablet UIO",
+    "price": 349.99,
+    "description": "Ein vielseitiges Tablet mit großem Display, ideal für Unterhaltung und Produktivität.",
+    "mainImage": "/images/smartphone-xyz-main.jpg",
+    "secondaryImage": "/images/smartphone-xyz-secondary.jpg"
+  },
+  {
+    "id": 15,
+    "name": "Tablet UIO",
+    "price": 349.99,
+    "description": "Ein vielseitiges Tablet mit großem Display, ideal für Unterhaltung und Produktivität.",
+    "mainImage": "/images/smartphone-xyz-main.jpg",
+    "secondaryImage": "/images/smartphone-xyz-secondary.jpg"
+  },
+  {
+    "id": 16,
+    "name": "Tablet UIO",
+    "price": 349.99,
+    "description": "Ein vielseitiges Tablet mit großem Display, ideal für Unterhaltung und Produktivität.",
+    "mainImage": "/images/smartphone-xyz-main.jpg",
+    "secondaryImage": "/images/smartphone-xyz-secondary.jpg"
+  },
+  {
+    "id": 17,
+    "name": "Tablet UIO",
+    "price": 349.99,
+    "description": "Ein vielseitiges Tablet mit großem Display, ideal für Unterhaltung und Produktivität.",
+    "mainImage": "/images/smartphone-xyz-main.jpg",
+    "secondaryImage": "/images/smartphone-xyz-secondary.jpg"
   }
 ]

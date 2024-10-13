@@ -1,15 +1,46 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from './CartContext';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
+  const [visibleProducts, setVisibleProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { cart, addToCart } = useCart();
+  const observer = useRef();
+  const productObservers = useRef({});
+
+  const lastProductElementRef = useCallback(node => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && visibleProducts.length < products.length) {
+        const newProducts = products.slice(visibleProducts.length, visibleProducts.length + 4);
+        setVisibleProducts(prev => [...prev, ...newProducts]);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [loading, products, visibleProducts]);
+
+  const productElementRef = useCallback(node => {
+    if (node) {
+      const productObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            node.classList.add('animate-fade-in-up');
+            productObserver.unobserve(node);
+          }
+        },
+        { threshold: 0.1 }
+      );
+      productObserver.observe(node);
+      productObservers.current[node.dataset.productId] = productObserver;
+    }
+  }, []);
 
   useEffect(() => {
     fetch('/api/products')
@@ -22,6 +53,7 @@ export default function Home() {
       .then(data => {
         console.log('Geladene Produkte:', data);
         setProducts(data);
+        setVisibleProducts(data.slice(0, 8)); // Lade initial 8 Produkte
         setLoading(false);
       })
       .catch(error => {
@@ -29,6 +61,10 @@ export default function Home() {
         setError('Fehler beim Laden der Produkte. Bitte versuchen Sie es später erneut.');
         setLoading(false);
       });
+
+    return () => {
+      Object.values(productObservers.current).forEach(observer => observer.disconnect());
+    };
   }, []);
 
   const isInCart = (productId) => cart.some(item => item.id === productId);
@@ -38,25 +74,37 @@ export default function Home() {
       <div className="flex-grow container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold my-8 text-gray-800">Produkte</h1>
         {loading ? (
-          <p className="text-gray-600"></p>
+          <p className="text-gray-600">Laden...</p>
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-h-[800px]">
-            {products.map((product, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {visibleProducts.map((product, index) => (
               <div 
                 key={product.id} 
-                className="flex flex-col p-2 rounded-lg transition-all duration-300 hover:shadow-[0_0_0_1px_#3B82F6] opacity-0 animate-fade-in-up"
-                style={{animationDelay: `${index * 50}ms`, animationFillMode: 'both'}}
+                ref={node => {
+                  productElementRef(node);
+                  if (index === visibleProducts.length - 1) lastProductElementRef(node);
+                }}
+                data-product-id={product.id}
+                className="flex flex-col p-2 rounded-lg transition-all duration-300 hover:shadow-[0_0_0_1px_#3B82F6] opacity-0"
               >
                 <Link href={`/product/${product.id}`} className="flex-grow">
-                  <div className="w-full h-48 relative mb-4">
+                  <div className="w-full h-48 relative mb-4 rounded-lg overflow-hidden">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
                     <Image
                       src={product.mainImage}
                       alt={product.name}
                       layout="fill"
                       objectFit="contain"
-                      className="rounded-lg"
+                      className="rounded-lg transition-opacity duration-300 opacity-0"
+                      loading="lazy"
+                      onLoadingComplete={(image) => {
+                        image.classList.remove('opacity-0');
+                        image.parentElement.querySelector('.animate-spin').classList.add('hidden');
+                      }}
                     />
                   </div>
                   <h2 className="text-lg font-semibold text-gray-700 hover:text-blue-500 mb-2">{product.name}</h2>
