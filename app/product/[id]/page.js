@@ -73,6 +73,7 @@ export default function ProductPage({ params }) {
                 width={500}
                 height={500}
                 className="w-full h-auto object-cover rounded"
+                quality={90} // Volle Qualität
               />
               <Image
                 src={product.secondaryImage}
@@ -80,6 +81,7 @@ export default function ProductPage({ params }) {
                 width={500}
                 height={500}
                 className="w-full h-auto object-cover rounded"
+                quality={90} // Volle Qualität
               />
             </div>
           </div>

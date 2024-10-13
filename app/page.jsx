@@ -108,6 +108,8 @@ export default function Home() {
                       objectFit="contain"
                       className="rounded-lg"
                       priority={index < 4}
+                      quality={75} // Reduzierte Qualität auf 50%
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Optimiert für verschiedene Bildschirmgrößen
                     />
                   </div>
                   <h2 className="text-lg font-semibold text-gray-700 hover:text-blue-500 mb-2">{product.name}</h2>
