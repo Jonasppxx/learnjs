@@ -15,33 +15,31 @@ export function CartProvider({ children }) {
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
-
-  const addToCart = (product) => {
-    setCart(prevCart => {
-      if (!prevCart.find(item => item.id === product.id)) {
-        return [...prevCart, product];
-      }
-      return prevCart;
+  const addToCart = (product, productType) => {
+    setCart((prevCart) => {
+      const updatedCart = [...prevCart, { ...product, productType }];
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      return updatedCart;
     });
   };
 
-  const removeFromCart = (productId) => {
-    setCart(prevCart => prevCart.filter(item => item.id !== productId));
+  const removeFromCart = (productId, productType) => {
+    setCart((prevCart) => {
+      const updatedCart = prevCart.filter((item) => !(item.id === productId && item.productType === productType));
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      return updatedCart;
+    });
   };
 
-  const toggleCart = () => {
-    setIsOpen(!isOpen);
+  const isInCart = (productId, productType) => {
+    return cart.some((item) => item.id === productId && item.productType === productType);
   };
 
-  const closeCart = () => {
-    setIsOpen(false);
-  };
+  const toggleCart = () => setIsOpen(!isOpen);
+  const closeCart = () => setIsOpen(false);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, isOpen, toggleCart, closeCart }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, isInCart, isOpen, toggleCart, closeCart }}>
       {children}
     </CartContext.Provider>
   );

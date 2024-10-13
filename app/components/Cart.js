@@ -17,17 +17,15 @@ export default function Cart() {
     function handleClickOutside(event) {
       if (cartRef.current && !cartRef.current.contains(event.target)) {
         closeCart();
-        event.preventDefault();
-        event.stopPropagation();
       }
     }
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside, true);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside, true);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [closeCart, isOpen]);
 
@@ -38,14 +36,16 @@ export default function Cart() {
     router.push('/checkout');
   };
 
-  const handleCartClick = (event) => {
-    event.stopPropagation();
-  };
-
-  const handleProductClick = (e, productId) => {
+  const handleProductClick = (e, productId, productType) => {
     e.stopPropagation();
     closeCart();
-    router.push(`/product/${productId}`);
+    if (productType === 'singles') {
+      router.push(`/singles/${productId}`);
+    } else if (productType === 'sealed') {
+      router.push(`/sealed/${productId}`);
+    } else {
+      router.push(`/product/${productId}`);
+    }
   };
 
   if (isCheckoutPage) {
@@ -64,7 +64,6 @@ export default function Cart() {
         <div 
           ref={cartRef} 
           className="absolute top-full right-0 mt-2 w-80 bg-white shadow-lg z-50 p-4 rounded-lg"
-          onClick={handleCartClick}
         >
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Warenkorb</h2>
@@ -80,9 +79,9 @@ export default function Cart() {
           ) : (
             <>
               {cart.map(item => (
-                <div key={item.id} className="flex justify-between items-center mb-2">
+                <div key={`${item.id}-${item.productType}`} className="flex justify-between items-center mb-2">
                   <span 
-                    onClick={(e) => handleProductClick(e, item.id)}
+                    onClick={(e) => handleProductClick(e, item.id, item.productType)}
                     className="cursor-pointer hover:text-blue-500 transition-colors duration-200"
                   >
                     {item.name}
@@ -90,10 +89,7 @@ export default function Cart() {
                   <div>
                     <span className="mr-2">{item.price.toFixed(2)} CHF</span>
                     <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeFromCart(item.id);
-                      }} 
+                      onClick={() => removeFromCart(item.id, item.productType)} 
                       className="text-red-500"
                     >
                       ✕
