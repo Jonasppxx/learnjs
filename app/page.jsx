@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from './CartContext';
+import { supabase } from '../lib/supabase';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -43,24 +44,32 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    fetch('/api/products')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+    const fetchProducts = async () => {
+      try {
+        console.log('Fetching products...');
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('id', { ascending: true });
+
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
         }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Geladene Produkte:', data);
+
+        console.log('Fetched products:', data);
         setProducts(data);
         setVisibleProducts(data.slice(0, 8)); // Lade initial 8 Produkte
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error('Fehler beim Laden der Produkte:', error);
+      } catch (error) {
+        console.error('Error fetching products:', error);
         setError('Fehler beim Laden der Produkte. Bitte versuchen Sie es später erneut.');
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchProducts();
 
     return () => {
       Object.values(productRefs.current).forEach(observer => observer.disconnect());
@@ -84,7 +93,7 @@ export default function Home() {
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-h-[calc(100vh-300px)]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {visibleProducts.map((product, index) => (
               <div 
                 key={product.id} 
@@ -93,7 +102,7 @@ export default function Home() {
                   if (index === visibleProducts.length - 1) lastProductElementRef(node);
                 }}
                 data-product-id={product.id}
-                className="flex flex-col p-2 rounded-lg transition-all duration-500 ease-out hover:shadow-[0_0_0_1px_#3B82F6]"
+                className="flex flex-col p-2 rounded-lg transition-all duration-500 ease-out hover:shadow-[0_0_0_1px_#3B82F6] h-full"
                 style={{
                   opacity: 0,
                   transform: 'translateY(20px)',
@@ -101,7 +110,7 @@ export default function Home() {
               >
                 <Link 
                   href={`/product/${product.id}`} 
-                  className="flex-grow"
+                  className="flex flex-col flex-grow"
                   onClick={handleProductClick}
                 >
                   <div className="w-full h-48 relative mb-4 rounded-lg overflow-hidden bg-gray-100">
@@ -109,7 +118,7 @@ export default function Home() {
                       <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                     <Image
-                      src={product.mainImage}
+                      src={product.main_image}
                       alt={product.name}
                       layout="fill"
                       objectFit="contain"
@@ -125,18 +134,20 @@ export default function Home() {
                   </div>
                   <h2 className="text-lg font-semibold text-gray-700 hover:text-blue-500 mb-2">{product.name}</h2>
                 </Link>
-                <p className="font-bold text-gray-800 mb-2">{product.price.toFixed(2)} CHF</p>
-                <button
-                  onClick={() => !isInCart(product.id) && addToCart(product)}
-                  className={`w-full px-4 py-2 rounded transition duration-300 ${
-                    isInCart(product.id)
-                      ? 'bg-gray-500 text-white cursor-not-allowed'
-                      : 'bg-blue-500 hover:bg-blue-600 text-white'
-                  }`}
-                  disabled={isInCart(product.id)}
-                >
-                  {isInCart(product.id) ? 'In cart' : 'Add to cart'}
-                </button>
+                <div className="mt-auto">
+                  <p className="font-bold text-gray-800 mb-2">{product.price.toFixed(2)} CHF</p>
+                  <button
+                    onClick={() => !isInCart(product.id) && addToCart(product)}
+                    className={`w-full px-4 py-2 rounded transition duration-300 ${
+                      isInCart(product.id)
+                        ? 'bg-gray-500 text-white cursor-not-allowed'
+                        : 'bg-blue-500 hover:bg-blue-600 text-white'
+                    }`}
+                    disabled={isInCart(product.id)}
+                  >
+                    {isInCart(product.id) ? 'In cart' : 'Add to cart'}
+                  </button>
+                </div>
               </div>
             ))}
           </div>

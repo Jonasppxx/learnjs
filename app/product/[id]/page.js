@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '../../CartContext';
+import { supabase } from '../../../lib/supabase';
 
 export default function ProductPage({ params }) {
   const [product, setProduct] = useState(null);
@@ -14,22 +15,31 @@ export default function ProductPage({ params }) {
   const { cart, addToCart } = useCart();
 
   useEffect(() => {
-    fetch(`/api/products/${params.id}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', params.id)
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          setProduct(data);
+        } else {
+          setError('Produkt nicht gefunden');
         }
-        return response.json();
-      })
-      .then(data => {
-        setProduct(data);
-        setLoading(false);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching product:', error);
         setError('Fehler beim Laden des Produkts. Bitte versuchen Sie es später erneut.');
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchProduct();
   }, [params.id]);
 
   if (loading) return <p className="text-center text-xl mt-8">Laden...</p>;
@@ -72,7 +82,7 @@ export default function ProductPage({ params }) {
                   <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
                 <Image
-                  src={product.mainImage}
+                  src={product.main_image}
                   alt={`${product.name} - Hauptbild`}
                   layout="fill"
                   objectFit="contain"
@@ -85,24 +95,26 @@ export default function ProductPage({ params }) {
                   style={{ opacity: 0, transition: 'opacity 0.3s' }}
                 />
               </div>
-              <div className="relative aspect-square rounded">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              {product.secondary_image && (
+                <div className="relative aspect-square rounded">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                  <Image
+                    src={product.secondary_image}
+                    alt={`${product.name} - Zusätzliches Bild`}
+                    layout="fill"
+                    objectFit="contain"
+                    className="rounded"
+                    priority
+                    onLoadingComplete={(img) => {
+                      img.style.opacity = 1;
+                      img.previousSibling.style.display = 'none';
+                    }}
+                    style={{ opacity: 0, transition: 'opacity 0.3s' }}
+                  />
                 </div>
-                <Image
-                  src={product.secondaryImage}
-                  alt={`${product.name} - Zusätzliches Bild`}
-                  layout="fill"
-                  objectFit="contain"
-                  className="rounded"
-                  priority
-                  onLoadingComplete={(img) => {
-                    img.style.opacity = 1;
-                    img.previousSibling.style.display = 'none';
-                  }}
-                  style={{ opacity: 0, transition: 'opacity 0.3s' }}
-                />
-              </div>
+              )}
             </div>
           </div>
         </div>
