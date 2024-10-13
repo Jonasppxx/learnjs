@@ -74,7 +74,7 @@ export default function Home() {
       <div className="flex-grow container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold my-8 text-gray-800">Produkte</h1>
         {loading ? (
-          <p className="text-gray-600">Laden...</p>
+          <p className="text-gray-600"></p>
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
