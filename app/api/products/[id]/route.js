@@ -1,14 +1,25 @@
 import { NextResponse } from 'next/server';
-import products from '../../../../data/products.json';
+import { supabase } from '../../../../lib/supabase';
 
 export const runtime = 'edge';
 
 export async function GET(request, { params }) {
-  const product = products.find(p => p.id === parseInt(params.id));
-  
-  if (product) {
-    return NextResponse.json(product);
-  } else {
-    return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', params.id)
+      .single();
+
+    if (error) throw error;
+
+    if (data) {
+      return NextResponse.json(data);
+    } else {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    }
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
