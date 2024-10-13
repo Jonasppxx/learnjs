@@ -1,6 +1,7 @@
 import './globals.css'
 import { CartProvider } from './CartContext'
 import Header from './components/Header'
+import CartOverlay from './components/CartOverlay'
 
 export const metadata = {
   title: 'Pokebuy - Ihr Online-Shop für Pokémon-Karten',
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
       <body>
         <CartProvider>
           <Header />
+          <CartOverlay />
           <main className="content-wrapper pt-4">
             {children}
           </main>

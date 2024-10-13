@@ -10,7 +10,7 @@ export default function Home() {
   const [visibleProducts, setVisibleProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { cart, addToCart } = useCart();
+  const { cart, addToCart, isOpen } = useCart();
   const observer = useRef();
   const productObservers = useRef({});
 
@@ -69,6 +69,12 @@ export default function Home() {
 
   const isInCart = (productId) => cart.some(item => item.id === productId);
 
+  const handleProductClick = (e) => {
+    if (isOpen) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow container mx-auto px-4 py-8">
@@ -89,7 +95,11 @@ export default function Home() {
                 data-product-id={product.id}
                 className="flex flex-col p-2 rounded-lg transition-all duration-300 hover:shadow-[0_0_0_1px_#3B82F6] opacity-0"
               >
-                <Link href={`/product/${product.id}`} className="flex-grow">
+                <Link 
+                  href={`/product/${product.id}`} 
+                  className="flex-grow"
+                  onClick={handleProductClick}
+                >
                   <div className="w-full h-48 relative mb-4 rounded-lg overflow-hidden">
                     <Image
                       src={product.mainImage}
@@ -97,7 +107,7 @@ export default function Home() {
                       layout="fill"
                       objectFit="contain"
                       className="rounded-lg"
-                      priority={index < 4} // Priorisiere das Laden der ersten 4 Bilder
+                      priority={index < 4}
                     />
                   </div>
                   <h2 className="text-lg font-semibold text-gray-700 hover:text-blue-500 mb-2">{product.name}</h2>

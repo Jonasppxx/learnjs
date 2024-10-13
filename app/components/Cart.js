@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 import { useCart } from '../CartContext';
-import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Cart() {
   const { cart, removeFromCart, isOpen, toggleCart, closeCart } = useCart();
@@ -17,14 +17,19 @@ export default function Cart() {
     function handleClickOutside(event) {
       if (cartRef.current && !cartRef.current.contains(event.target)) {
         closeCart();
+        event.preventDefault();
+        event.stopPropagation();
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside, true);
+    }
+
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside, true);
     };
-  }, [closeCart]);
+  }, [closeCart, isOpen]);
 
   const totalAmount = cart.reduce((sum, item) => sum + item.price, 0).toFixed(2);
 
@@ -33,12 +38,22 @@ export default function Cart() {
     router.push('/checkout');
   };
 
+  const handleCartClick = (event) => {
+    event.stopPropagation();
+  };
+
+  const handleProductClick = (e, productId) => {
+    e.stopPropagation();
+    closeCart();
+    router.push(`/product/${productId}`);
+  };
+
   if (isCheckoutPage) {
     return null;
   }
 
   return (
-    <div className="relative">
+    <div className="relative z-50">
       <button
         onClick={toggleCart}
         className="bg-blue-500 text-white p-2 rounded-full shadow-lg"
@@ -46,18 +61,41 @@ export default function Cart() {
         🛒 {cart.length}
       </button>
       {isOpen && (
-        <div ref={cartRef} className="absolute top-full right-0 mt-2 w-80 bg-white shadow-lg z-50 p-4 rounded-lg">
-          <h2 className="text-2xl font-bold mb-4">Warenkorb</h2>
+        <div 
+          ref={cartRef} 
+          className="absolute top-full right-0 mt-2 w-80 bg-white shadow-lg z-50 p-4 rounded-lg"
+          onClick={handleCartClick}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold">Warenkorb</h2>
+            <button 
+              onClick={closeCart}
+              className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+            >
+              ✕
+            </button>
+          </div>
           {cart.length === 0 ? (
             <p>Ihr Warenkorb ist leer.</p>
           ) : (
             <>
               {cart.map(item => (
                 <div key={item.id} className="flex justify-between items-center mb-2">
-                  <span>{item.name}</span>
+                  <span 
+                    onClick={(e) => handleProductClick(e, item.id)}
+                    className="cursor-pointer hover:text-blue-500 transition-colors duration-200"
+                  >
+                    {item.name}
+                  </span>
                   <div>
                     <span className="mr-2">{item.price.toFixed(2)} CHF</span>
-                    <button onClick={() => removeFromCart(item.id)} className="text-red-500">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFromCart(item.id);
+                      }} 
+                      className="text-red-500"
+                    >
                       ✕
                     </button>
                   </div>
