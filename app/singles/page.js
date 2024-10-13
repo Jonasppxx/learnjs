@@ -5,12 +5,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '../CartContext';
 import { supabase } from '../../lib/supabase';
+import { useRouter } from 'next/navigation';
 
 export default function Singles() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { addToCart, isInCart } = useCart();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -41,7 +43,14 @@ export default function Singles() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow container mx-auto px-4 py-8 mt-16">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-gray-800">Pokémon Singles</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">Pokémon Singles</h1>
+          <Link href="/"
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition duration-300"
+          >
+            Zurück zur Startseite
+          </Link>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {products.map(product => (
             <div key={product.id} className="group relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-blue-500 hover:border-2">

@@ -75,12 +75,6 @@ function SearchResults() {
     fetchProducts();
   }, [query]);
 
-  const handleReset = () => {
-    router.push(`/${origin}`);
-  };
-
-  if (loading) return <p className="text-center py-4 mt-16">Laden...</p>;
-
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow container mx-auto px-4 py-8 mt-16">
@@ -88,12 +82,11 @@ function SearchResults() {
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
             {query ? `Suchergebnisse für "${query}"` : 'Alle Produkte'}
           </h1>
-          <button
-            onClick={handleReset}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
+          <Link href="/"
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition duration-300"
           >
-            Zurück zu {origin === 'singles' ? 'Singles' : 'Sealed Products'}
-          </button>
+            Zurück zur Startseite
+          </Link>
         </div>
         {results.length === 0 ? (
           <p className="text-center">Keine Ergebnisse gefunden.</p>
