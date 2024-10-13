@@ -91,20 +91,13 @@ export default function Home() {
               >
                 <Link href={`/product/${product.id}`} className="flex-grow">
                   <div className="w-full h-48 relative mb-4 rounded-lg overflow-hidden">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                    </div>
                     <Image
                       src={product.mainImage}
                       alt={product.name}
                       layout="fill"
                       objectFit="contain"
-                      className="rounded-lg transition-opacity duration-300 opacity-0"
-                      loading="lazy"
-                      onLoadingComplete={(image) => {
-                        image.classList.remove('opacity-0');
-                        image.parentElement.querySelector('.animate-spin').classList.add('hidden');
-                      }}
+                      className="rounded-lg"
+                      priority={index < 4} // Priorisiere das Laden der ersten 4 Bilder
                     />
                   </div>
                   <h2 className="text-lg font-semibold text-gray-700 hover:text-blue-500 mb-2">{product.name}</h2>
