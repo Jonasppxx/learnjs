@@ -132,52 +132,58 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-grow container mx-auto px-4 py-8">
-        <div className="mb-16"></div>
-        
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold transition-opacity duration-500">
-            {welcomeMessages[welcomeIndex].split(' ').map((word, index) => (
-              <span key={index} className={index === welcomeMessages[welcomeIndex].split(' ').length - 1 ? "bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text" : ""}>
-                {word}{' '}
-              </span>
-            ))}
-          </h1>
+      <div className="flex-grow">
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-16"></div>
+          
+          <div className="text-center mb-12">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold transition-opacity duration-500 whitespace-nowrap overflow-hidden">
+              {welcomeMessages[welcomeIndex].split(' ').map((word, index) => (
+                <span key={index} className={index === welcomeMessages[welcomeIndex].split(' ').length - 1 ? "bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text" : ""}>
+                  {word}{' '}
+                </span>
+              ))}
+            </h1>
+          </div>
         </div>
         
         {featuredCard && (
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg shadow-lg p-6 mb-8">
-            <div className="flex flex-col md:flex-row items-center">
-              <div className="w-full md:w-1/3 mb-4 md:mb-0">
-                <Image 
-                  src={featuredCard.main_image} 
-                  alt={featuredCard.name} 
-                  width={200} 
-                  height={200} 
-                  className="rounded-lg mx-auto"
-                  objectFit="contain"
-                />
-              </div>
-              <div className="w-full md:w-2/3 md:pl-6 text-center md:text-left">
-                <h2 className="text-2xl font-bold mb-2">{featuredCard.name}</h2>
-                <p className="text-lg italic mb-4">"{featuredCard.quote}"</p>
-                <p className="mb-4">{featuredCard.description}</p>
-                <p className="text-xl font-bold mb-4">{featuredCard.price.toFixed(2)} CHF</p>
-                <Link href={`/singles/${featuredCard.id}`} className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-2 px-4 rounded transition duration-300">
-                  Produkt ansehen
-                </Link>
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-6 mb-8">
+            <div className="container mx-auto px-4">
+              <div className="flex flex-col md:flex-row items-center">
+                <div className="w-full md:w-1/3 mb-4 md:mb-0">
+                  <Image 
+                    src={featuredCard.main_image} 
+                    alt={featuredCard.name} 
+                    width={200} 
+                    height={200} 
+                    className="rounded-lg mx-auto"
+                    objectFit="contain"
+                  />
+                </div>
+                <div className="w-full md:w-2/3 md:pl-6 text-center md:text-left">
+                  <h2 className="text-2xl font-bold mb-2">{featuredCard.name}</h2>
+                  <p className="text-lg italic mb-4">"{featuredCard.quote}"</p>
+                  <p className="mb-4">{featuredCard.description}</p>
+                  <p className="text-xl font-bold mb-4">{featuredCard.price.toFixed(2)} CHF</p>
+                  <Link href={`/singles/${featuredCard.id}`} className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-2 px-4 rounded transition duration-300">
+                    Produkt ansehen
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
         )}
         
-        <ProductSection title="Singles" products={singles} type="singles" addToCart={addToCart} isInCart={isInCart} />
-        <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" addToCart={addToCart} isInCart={isInCart} />
+        <div className="container mx-auto px-4">
+          <ProductSection title="Singles" products={singles} type="singles" addToCart={addToCart} isInCart={isInCart} />
+          <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" addToCart={addToCart} isInCart={isInCart} />
+        </div>
 
         {expensiveCard && (
-          <div className="mt-16">
-            <h2 className="text-3xl font-bold mb-6 text-center">Unsere Empfehlung</h2>
-            <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white rounded-lg shadow-lg p-6">
+          <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white py-6 mt-16">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold mb-6 text-center">Unsere Empfehlung</h2>
               <div className="flex flex-col md:flex-row items-center">
                 <div className="w-full md:w-1/3 mb-4 md:mb-0">
                   <div className="relative w-48 h-64 mx-auto perspective-1000">
@@ -207,7 +213,7 @@ export default function Home() {
       </div>
       
       {/* Ricardo Link */}
-      <div className="bg-gray-100 py-4">
+      <div className="bg-gray-100 py-4 w-full">
         <div className="container mx-auto px-4">
           <a 
             href="https://www.ricardo.ch/de/shop/J0B0/offers/" 
