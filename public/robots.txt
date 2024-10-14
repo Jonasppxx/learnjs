@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /cart/
+Disallow: /checkout/
+Allow: /
+
+Sitemap: https://www.pokebuy.ch/sitemap.xml
