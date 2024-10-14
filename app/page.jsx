@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase';
@@ -36,6 +36,7 @@ export default function Home() {
   ];
 
   const { addToCart, isInCart } = useCart();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -63,7 +64,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setLoading(true);
+        setIsLoading(true);
         
         // Fetch singles
         const { data: singlesData, error: singlesError } = await supabase
@@ -120,15 +121,12 @@ export default function Home() {
         console.error('Error fetching products:', error);
         setError('Fehler beim Laden der Produkte. Bitte versuchen Sie es später erneut.');
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     fetchProducts();
   }, [productsPerRow]);
-
-  if (loading) return <p className="text-center text-xl mt-8">Laden...</p>;
-  if (error) return <p className="text-center text-xl mt-8 text-red-500">{error}</p>;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -152,14 +150,17 @@ export default function Home() {
             <div className="container mx-auto px-4">
               <div className="flex flex-col md:flex-row items-center">
                 <div className="w-full md:w-1/3 mb-4 md:mb-0">
-                  <Image 
-                    src={featuredCard.main_image} 
-                    alt={featuredCard.name} 
-                    width={200} 
-                    height={200} 
-                    className="rounded-lg mx-auto"
-                    objectFit="contain"
-                  />
+                  <div className="relative w-48 h-64 mx-auto">
+                    <Image 
+                      src={featuredCard.main_image} 
+                      alt={featuredCard.name} 
+                      layout="fill"
+                      objectFit="contain"
+                      className="rounded-lg"
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+                    />
+                  </div>
                 </div>
                 <div className="w-full md:w-2/3 md:pl-6 text-center md:text-left">
                   <h2 className="text-2xl font-bold mb-2">{featuredCard.name}</h2>
@@ -176,8 +177,8 @@ export default function Home() {
         )}
         
         <div className="container mx-auto px-4">
-          <ProductSection title="Singles" products={singles} type="singles" addToCart={addToCart} isInCart={isInCart} />
-          <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" addToCart={addToCart} isInCart={isInCart} />
+          <ProductSection title="Singles" products={singles} type="singles" addToCart={addToCart} isInCart={isInCart} isLoading={isLoading} />
+          <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" addToCart={addToCart} isInCart={isInCart} isLoading={isLoading} />
         </div>
 
         {expensiveCard && (
@@ -249,7 +250,36 @@ export default function Home() {
   );
 }
 
-function ProductSection({ title, products, type, addToCart, isInCart }) {
+function ProductSection({ title, products, type, addToCart, isInCart, isLoading }) {
+  const productRefs = useRef([]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const img = entry.target.querySelector('img');
+            if (img) {
+              img.src = img.dataset.src;
+              observer.unobserve(entry.target);
+            }
+          }
+        });
+      },
+      { rootMargin: '100px' }
+    );
+
+    productRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => {
+      productRefs.current.forEach((ref) => {
+        if (ref) observer.unobserve(ref);
+      });
+    };
+  }, [products]);
+
   return (
     <section className="mb-12">
       <div className="flex justify-between items-center mb-4">
@@ -264,44 +294,49 @@ function ProductSection({ title, products, type, addToCart, isInCart }) {
           </span>
         </Link>
       </div>
-      {products.length === 0 ? (
-        <div className="text-center py-12 bg-gray-100 rounded-lg">
-          <p className="text-2xl font-bold text-gray-600">Coming Soon</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {products.map(product => (
-            <div key={product.id} className="group relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-blue-500 hover:border-2">
-              <Link href={`/${type}/${product.id}`} className="block">
-                <div className="relative pt-[100%]">
-                  <Image 
-                    src={product.main_image} 
-                    alt={product.name} 
-                    layout="fill" 
-                    objectFit="contain" 
-                    className="absolute top-0 left-0 w-full h-full p-2"
-                  />
-                </div>
-                <div className="p-2 pb-4 absolute bottom-0 left-0 right-0 bg-white bg-opacity-80">
-                  <h2 className="text-sm md:text-base font-semibold text-gray-800 truncate">{product.name}</h2>
-                  <p className="text-sm text-gray-600 font-bold mt-1">{product.price.toFixed(2)} CHF</p>
-                </div>
-              </Link>
-              <button
-                onClick={() => addToCart(product, type)}
-                className={`absolute top-2 right-2 p-2 rounded-full ${
-                  isInCart(product.id, type)
-                    ? 'bg-gray-500'
-                    : 'bg-blue-500 hover:bg-blue-600'
-                } text-white`}
-                disabled={isInCart(product.id, type)}
-              >
-                {isInCart(product.id, type) ? '✓' : '+'}
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {products.map((product, index) => (
+          <div 
+            key={product.id} 
+            ref={el => productRefs.current[index] = el}
+            className="group relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-blue-500 hover:border-2"
+          >
+            <Link href={`/${type}/${product.id}`} className="block">
+              <div className="relative pt-[100%] bg-gray-200">
+                <Image 
+                  data-src={product.main_image}
+                  alt={product.name} 
+                  layout="fill" 
+                  objectFit="contain" 
+                  className="absolute top-0 left-0 w-full h-full p-2"
+                  loading="lazy"
+                  placeholder="blur"
+                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+                />
+              </div>
+              <div className="p-2 pb-4 absolute bottom-0 left-0 right-0 bg-white bg-opacity-80">
+                <h2 className="text-sm md:text-base font-semibold text-gray-800 truncate">
+                  {product.name}
+                </h2>
+                <p className="text-sm text-gray-600 font-bold mt-1">
+                  {product.price.toFixed(2)} CHF
+                </p>
+              </div>
+            </Link>
+            <button
+              onClick={() => addToCart(product, type)}
+              className={`absolute top-2 right-2 p-2 rounded-full ${
+                isInCart(product.id, type)
+                  ? 'bg-gray-500'
+                  : 'bg-blue-500 hover:bg-blue-600'
+              } text-white`}
+              disabled={isInCart(product.id, type)}
+            >
+              {isInCart(product.id, type) ? '✓' : '+'}
+            </button>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
