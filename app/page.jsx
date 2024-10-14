@@ -220,7 +220,7 @@ export default function Home() {
             href="https://www.ricardo.ch/de/shop/J0B0/offers/" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="flex items-center justify-center bg-white border border-gray-300 rounded-lg px-6 py-3 hover:bg-gray-50 transition duration-300"
+            className="flex items-center justify-center bg-white border border-gray-300 rounded-lg px-6 py-4 hover:bg-gray-50 transition duration-300"
           >
             <Image 
               src="/logo.png" 
@@ -229,7 +229,7 @@ export default function Home() {
               height={40} 
               className="mr-3"
             />
-            <span className="text-lg font-semibold">Besuchen Sie unseren Ricardo-Shop</span>
+            <span className="text-lg font-semibold leading-none">Besuchen Sie unseren Ricardo-Shop</span>
           </a>
         </div>
       </div>
@@ -299,7 +299,7 @@ function ProductSection({ title, products, type, addToCart, isInCart, isLoading 
           <div 
             key={product.id} 
             ref={el => productRefs.current[index] = el}
-            className="group relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-blue-500 hover:border-2"
+            className="relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg border-2 border-transparent hover:border-blue-500"
           >
             <Link href={`/${type}/${product.id}`} className="block">
               <div className="relative pt-[100%] bg-gray-200">
