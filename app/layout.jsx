@@ -6,7 +6,7 @@ import CartOverlay from './components/CartOverlay'
 export const metadata = {
   title: 'Pokebuy - Ihr Online-Shop für Pokémon-Karten',
   description: 'Entdecken Sie eine große Auswahl an Pokémon-Karten und Booster Packs. Kaufen Sie die neuesten Editionen und seltene Karten in unserem sicheren und benutzerfreundlichen Online-Shop.',
-  keywords: 'Pokémon, Karten, Booster Packs, Trading Cards, Sammelkarten, Online-Shop',
+  keywords: 'Pokemon, TCG, pokemon karten, Trading Cards, Sammelkarten, Schweiz',
   author: 'Pokebuy Team',
   openGraph: {
     title: 'Pokebuy - Pokémon-Karten Online-Shop',
