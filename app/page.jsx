@@ -135,7 +135,7 @@ export default function Home() {
           <div className="mb-16"></div>
           
           <div className="text-center mb-12">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold transition-opacity duration-500 whitespace-nowrap overflow-hidden">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold transition-opacity duration-500 whitespace-nowrap">
               {welcomeMessages[welcomeIndex].split(' ').map((word, index) => (
                 <span key={index} className={index === welcomeMessages[welcomeIndex].split(' ').length - 1 ? "bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text" : ""}>
                   {word}{' '}
