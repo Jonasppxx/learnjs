@@ -13,8 +13,7 @@ export default function SealedProductPage({ params }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { addToCart, isInCart } = useCart();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalImage, setModalImage] = useState('');
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -40,88 +39,60 @@ export default function SealedProductPage({ params }) {
     fetchProduct();
   }, [params.id]);
 
-  const openModal = (image) => {
-    setModalImage(image);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  if (loading) return <p className="text-center text-xl mt-24">Laden...</p>;
-  if (error) return <p className="text-center text-xl mt-24 text-red-500">{error}</p>;
-  if (!product) return <p className="text-center text-xl mt-24">Produkt nicht gefunden</p>;
-
   const handleAddToCart = () => {
     if (!isInCart(product.id, 'sealed')) {
       addToCart(product, 'sealed');
     }
   };
 
+  const handleImageClick = () => {
+    setIsFlipped(!isFlipped);
+  };
+
+  if (loading) return <p className="text-center text-xl mt-24">Laden...</p>;
+  if (error) return <p className="text-center text-xl mt-24 text-red-500">{error}</p>;
+  if (!product) return <p className="text-center text-xl mt-24">Produkt nicht gefunden</p>;
+
   return (
     <div className="container mx-auto px-4 py-8 mt-16">
       <Link href="/sealed" className="text-blue-600 hover:text-blue-800 mb-6 inline-block">
         ← Zurück zu Sealed Products
       </Link>
-      <div className="md:flex md:space-x-8 mt-8">
-        <div className="md:w-1/3 flex space-x-4">
-          <div className="relative w-1/2 cursor-pointer" onClick={() => openModal(product.main_image)}>
+      <div className="flex flex-col md:flex-row md:space-x-8 mt-8">
+        <div className="md:w-1/2 relative">
+          <div className={`relative w-full h-96 cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}`} onClick={handleImageClick}>
             <Image
-              src={product.main_image}
-              alt={`${product.name} - Hauptbild`}
-              layout="responsive"
-              width={150}
-              height={150}
-              objectFit="contain"
-              className="rounded-lg shadow-lg"
-            />
-          </div>
-          {product.secondary_image && (
-            <div className="relative w-1/2 cursor-pointer" onClick={() => openModal(product.secondary_image)}>
-              <Image
-                src={product.secondary_image}
-                alt={`${product.name} - Zusätzliches Bild`}
-                layout="responsive"
-                width={150}
-                height={150}
-                objectFit="contain"
-                className="rounded-lg shadow-lg"
-              />
-            </div>
-          )}
-        </div>
-        <div className="md:w-2/3">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-          <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-3xl font-bold text-gray-900">{product.price.toFixed(2)} CHF</span>
-            <button
-              onClick={handleAddToCart}
-              className={`px-6 py-3 ${isInCart(product.id, 'sealed') ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-300`}
-              disabled={isInCart(product.id, 'sealed')}
-            >
-              {isInCart(product.id, 'sealed') ? 'Im Warenkorb' : 'In den Warenkorb'}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" onClick={closeModal}>
-          <div className="relative w-full max-w-lg max-h-[80vh] overflow-auto">
-            <Image
-              src={modalImage}
-              alt="Vergrößertes Bild"
-              layout="responsive"
-              width={800}
-              height={800}
+              src={isFlipped ? product.secondary_image || product.main_image : product.main_image}
+              alt={`${product.name} - Bild`}
+              layout="fill"
               objectFit="contain"
               className="rounded-lg"
             />
           </div>
+          {/* Entferne das "Click me"-Bild */}
+          {/* <div className="absolute bottom-[-20px] right-[-20px]">
+            <Image
+              src="/images/click_me.jpg"
+              alt="Click me"
+              width={70} // Größeres Bild
+              height={70}
+              className="rounded-full"
+            />
+          </div> */}
         </div>
-      )}
+        <div className="md:w-1/2 mt-8 md:mt-0">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
+          <span className="text-2xl font-bold text-gray-900 mb-4 block">{product.price.toFixed(2)} CHF</span>
+          <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
+          <button
+            onClick={handleAddToCart}
+            className={`px-6 py-3 ${isInCart(product.id, 'sealed') ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-300`}
+            disabled={isInCart(product.id, 'sealed')}
+          >
+            {isInCart(product.id, 'sealed') ? 'Im Warenkorb' : 'In den Warenkorb'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
