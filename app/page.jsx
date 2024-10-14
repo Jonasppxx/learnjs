@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '../lib/supabase';
@@ -36,23 +36,19 @@ export default function Home() {
   ];
 
   const { addToCart, isInCart } = useCart();
-  const [isLoading, setIsLoading] = useState(false);
+
+  const handleResize = useCallback(() => {
+    if (window.innerWidth < 640) setProductsPerRow(1);
+    else if (window.innerWidth < 768) setProductsPerRow(2);
+    else if (window.innerWidth < 1024) setProductsPerRow(3);
+    else setProductsPerRow(4);
+  }, []);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 640) setProductsPerRow(1);
-      else if (window.innerWidth < 768) setProductsPerRow(2);
-      else if (window.innerWidth < 1024) setProductsPerRow(3);
-      else setProductsPerRow(4);
-    };
-
     handleResize();
     window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [handleResize]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,9 +60,8 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setIsLoading(true);
+        setLoading(true);
         
-        // Fetch singles
         const { data: singlesData, error: singlesError } = await supabase
           .from('singles')
           .select('*')
@@ -76,7 +71,6 @@ export default function Home() {
         if (singlesError) throw singlesError;
         setSingles(singlesData);
 
-        // Fetch sealed products
         const { data: sealedData, error: sealedError } = await supabase
           .from('sealed_products')
           .select('*')
@@ -86,7 +80,6 @@ export default function Home() {
         if (sealedError) throw sealedError;
         setSealedProducts(sealedData);
 
-        // Fetch a random product for the featured card
         const { data: allProducts, error: allProductsError } = await supabase
           .from('singles')
           .select('*')
@@ -106,7 +99,6 @@ export default function Home() {
           }, {})
         });
 
-        // Fetch the most expensive card
         const { data: expensiveData, error: expensiveError } = await supabase
           .from('singles')
           .select('*')
@@ -121,7 +113,7 @@ export default function Home() {
         console.error('Error fetching products:', error);
         setError('Fehler beim Laden der Produkte. Bitte versuchen Sie es später erneut.');
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
@@ -177,8 +169,8 @@ export default function Home() {
         )}
         
         <div className="container mx-auto px-4">
-          <ProductSection title="Singles" products={singles} type="singles" addToCart={addToCart} isInCart={isInCart} isLoading={isLoading} />
-          <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" addToCart={addToCart} isInCart={isInCart} isLoading={isLoading} />
+          <ProductSection title="Singles" products={singles} type="singles" addToCart={addToCart} isInCart={isInCart} isLoading={loading} />
+          <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" addToCart={addToCart} isInCart={isInCart} isLoading={loading} />
         </div>
 
         {expensiveCard && (
@@ -213,7 +205,6 @@ export default function Home() {
         )}
       </div>
       
-      {/* Ricardo Link */}
       <div className="bg-gray-100 py-4 w-full">
         <div className="container mx-auto px-4">
           <a 
@@ -304,7 +295,7 @@ function ProductSection({ title, products, type, addToCart, isInCart, isLoading 
             <div 
               key={product.id} 
               ref={el => productRefs.current[index] = el}
-              className="relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg border-2 border-transparent hover:border-blue-500"
+              className="relative bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg border-2 border-transparent hover:border-blue-500 animate-fade-in"
             >
               <Link href={`/${type}/${product.id}`} className="block">
                 <div className="relative pt-[100%] bg-gray-200">
