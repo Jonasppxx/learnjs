@@ -5,7 +5,7 @@ import SearchBar from './SearchBar'; // Importieren Sie die SearchBar-Komponente
 
 const Header = () => {
   return (
-    <header className="bg-gray-800 text-white p-4">
+    <header className="bg-gray-800 text-white p-4 sticky top-0 z-50 shadow-md"> {/* Sticky Header */}
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-xl font-bold">
           <Link href="/">Pokebuy</Link>
