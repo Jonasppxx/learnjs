@@ -1,5 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
+import Cart from './Cart'; // Importieren Sie die Cart-Komponente
+import SearchBar from './SearchBar'; // Importieren Sie die SearchBar-Komponente
 
 const Header = () => {
   return (
@@ -8,9 +10,12 @@ const Header = () => {
         <h1 className="text-xl font-bold">
           <Link href="/">Pokebuy</Link>
         </h1>
-        <nav>
+        <nav className="flex-grow flex justify-center"> {/* Flexbox für zentrierte Navigation */}
+          <SearchBar /> {/* Hier wird die Suchleiste eingebunden */}
+        </nav>
+        <nav className="flex items-center">
           <Link href="/checkout" className="mr-4">Checkout</Link>
-          <Link href="/cart">Warenkorb</Link>
+          <Cart /> {/* Hier wird die Cart-Komponente eingebunden */}
         </nav>
       </div>
     </header>
