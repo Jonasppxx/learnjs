@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 // Entfernen Sie die Header-Komponente
 // import Header from '../components/Header';
 // Importieren Sie die Footer-Komponente
-import Footer from '../components/Footer';
+import Footer from '../components/Footer'; // Footer wird hier importiert
 
 // Stellen Sie sicher, dass Sie Ihren Stripe Public Key hier einfügen
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -118,7 +118,7 @@ export default function Checkout() {
         </div>
       </div>
       {/* Fügen Sie die Footer-Komponente hier ein */}
-      <Footer />
+      <Footer /> {/* Footer wird hier gerendert */}
     </div>
   );
 }

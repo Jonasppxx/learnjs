@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
           <main className="content-wrapper"> {/* Padding entfernt */}
             {children}
           </main>
-          <Footer />
+          <Footer /> {/* Footer hier einfügen */}
         </CartProvider>
       </body>
     </html>
