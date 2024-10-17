@@ -1,18 +1,20 @@
-import Image from 'next/image';
-import Cart from './Cart';
+import React from 'react';
 import Link from 'next/link';
-import SearchBar from './SearchBar';
 
-export default function Header() {
+const Header = () => {
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white shadow-sm z-50 h-16">
-      <div className="container mx-auto px-4 h-full flex justify-between items-center">
-        <Link href="/" className="flex items-center">
-          <Image src="/logo.png" alt="Logo" width={60} height={24} className="opacity-80" />
-        </Link>
-        <SearchBar />
-        <Cart />
+    <header className="bg-gray-800 text-white p-4">
+      <div className="container mx-auto flex justify-between items-center">
+        <h1 className="text-xl font-bold">
+          <Link href="/">Pokebuy</Link>
+        </h1>
+        <nav>
+          <Link href="/checkout" className="mr-4">Checkout</Link>
+          <Link href="/cart">Warenkorb</Link>
+        </nav>
       </div>
     </header>
   );
-}
+};
+
+export default Header;

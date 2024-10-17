@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import Image from 'next/image';
-import Header from '../components/Header';
 import { useRouter } from 'next/navigation';
+// Entfernen Sie die Header-Komponente
+// import Header from '../components/Header';
+// Importieren Sie die Footer-Komponente
+import Footer from '../components/Footer';
 
 // Stellen Sie sicher, dass Sie Ihren Stripe Public Key hier einfügen
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -56,9 +59,9 @@ export default function Checkout() {
   };
 
   return (
-    <>
-      <Header hideSearch={true} hideCart={true} />
-      <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white">
+      {/* Header wurde entfernt */}
+      <div className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-extrabold text-gray-900">Checkout</h1>
@@ -114,6 +117,8 @@ export default function Checkout() {
           )}
         </div>
       </div>
-    </>
+      {/* Fügen Sie die Footer-Komponente hier ein */}
+      <Footer />
+    </div>
   );
 }

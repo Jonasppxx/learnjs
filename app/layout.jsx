@@ -1,7 +1,9 @@
 import './globals.css'
 import { CartProvider } from './CartContext'
-import Header from './components/Header'
 import CartOverlay from './components/CartOverlay'
+import Footer from './components/Footer'
+// Importieren Sie die Header-Komponente
+import Header from './components/Header';
 
 export const metadata = {
   title: 'Pokebuy - Ihr Online-Shop für Pokémon-Karten',
@@ -30,11 +32,13 @@ export default function RootLayout({ children }) {
     <html lang="de">
       <body>
         <CartProvider>
-          <Header />
           <CartOverlay />
+          {/* Fügen Sie die Header-Komponente hier ein */}
+          <Header />
           <main className="content-wrapper pt-4">
             {children}
           </main>
+          <Footer />
         </CartProvider>
       </body>
     </html>
