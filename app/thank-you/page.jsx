@@ -4,7 +4,6 @@ import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
-import Header from '../components/Header';
 
 const OrderDetails = dynamic(() => import('./OrderDetails'), {
   ssr: false,
@@ -14,7 +13,6 @@ const OrderDetails = dynamic(() => import('./OrderDetails'), {
 export default function ThankYou() {
   return (
     <>
-      <Header hideSearch={true} />
       <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl font-extrabold text-gray-900 mb-8 text-center">Vielen Dank für Ihre Bestellung!</h1>
