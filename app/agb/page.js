@@ -51,7 +51,7 @@ export default function AGB() {
 
       <section className="mb-6">
         <h2 className="text-2xl font-semibold mb-3">8. Anwendbares Recht und Gerichtsstand</h2>
-        <p>Es gilt schweizerisches Recht unter Ausschluss des UN-Kaufrechts. Gerichtsstand ist Belp, Schweiz.</p>
+        <p>Es gilt schweizerisches Recht unter Ausschluss des UN-Kaufrechts.</p>
       </section>
 
       <p className="mt-8 text-sm text-gray-600">

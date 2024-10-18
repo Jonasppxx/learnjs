@@ -20,9 +20,7 @@ export default function Datenschutz() {
       <p className="text-base mb-6">
         Willkommen bei Pokebuy, Ihrem vertrauenswürdigen Pokémon-Karten-Shop in Belp, Bern. Der Schutz Ihrer persönlichen Daten hat für uns höchste Priorität. In dieser Datenschutzerklärung möchten wir Sie darüber informieren, wie wir mit Ihren Daten umgehen und welche Rechte Sie haben.
       </p>
-      <p className="text-base mb-6">
-        <strong>1. Verantwortliche Stelle:</strong> Pokebuy, Bahnhofstrasse 10, 3123 Belp, Schweiz
-      </p>
+
       <p className="text-base mb-6">
         <strong>2. Datenerhebung und -verwendung:</strong> Wir erheben nur die Daten, die für die Abwicklung Ihrer Bestellungen und die Verbesserung unseres Services notwendig sind. Dazu gehören Name, Adresse, E-Mail und Zahlungsinformationen. Diese Daten werden ausschließlich zur Bestellabwicklung und Kundenbetreuung verwendet.
       </p>
@@ -42,7 +40,7 @@ export default function Datenschutz() {
         <strong>7. Änderungen:</strong> Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf zu aktualisieren. Bitte überprüfen Sie diese Seite regelmäßig auf Änderungen.
       </p>
       <p className="text-base mb-6">
-        <strong>Kontakt:</strong> Bei Fragen zur Verarbeitung Ihrer persönlichen Daten kontaktieren Sie uns bitte unter pokebuy@gmail.com oder schriftlich an unsere Geschäftsadresse.
+        <strong>Kontakt:</strong> Bei Fragen zur Verarbeitung Ihrer persönlichen Daten kontaktieren Sie uns bitte unter pokebuy@gmail.com.
       </p>
     </div>
   );
