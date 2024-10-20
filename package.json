@@ -17,6 +17,7 @@
     "react": "^18",
     "react-csv": "^2.2.2",
     "react-dom": "^18",
+    "react-dropzone": "^14.2.10",
     "stripe": "^17.2.0"
   },
   "devDependencies": {

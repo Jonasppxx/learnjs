@@ -17,7 +17,7 @@ export default function Products() {
       .from('products')
       .select('*')
       .order('created_at', { ascending: false })
-      .limit(50);  // Erhöhen Sie diese Zahl, um mehr Produkte zu laden
+      .limit(100);  // Erhöht auf 100 Produkte
 
     if (error) {
       console.error('Fehler beim Abrufen der Produkte:', error);
@@ -47,7 +47,7 @@ export default function Products() {
           Neues Produkt hinzufügen
         </Link>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {products.map((product) => (
           <div key={product.id} className="border rounded-lg p-4 shadow-md flex flex-col">
             {product.image && (
@@ -56,7 +56,7 @@ export default function Products() {
                   src={product.image}
                   alt={product.name}
                   layout="fill"
-                  objectFit="contain"
+                  objectFit="cover"
                   className="rounded-lg"
                 />
               </div>
