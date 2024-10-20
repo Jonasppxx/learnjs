@@ -7,37 +7,49 @@ import Link from 'next/link';
 
 export default function Products() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
   const fetchProducts = async () => {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(100);  // Erhöht auf 100 Produkte
-
-    if (error) {
-      console.error('Fehler beim Abrufen der Produkte:', error);
-    } else {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('id', { ascending: false })  // Ändern Sie 'id' zu einer vorhandenen Spalte
+        .limit(100);
+  
+      if (error) throw error;
       setProducts(data);
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Produkte:', error);
+      setError('Fehler beim Laden der Produkte. Bitte versuchen Sie es später erneut.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const deleteProduct = async (id) => {
-    const { error } = await supabase
-      .from('products')
-      .delete()
-      .match({ id });
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .match({ id });
 
-    if (error) {
-      console.error('Fehler beim Löschen des Produkts:', error);
-    } else {
+      if (error) throw error;
       fetchProducts();
+    } catch (error) {
+      console.error('Fehler beim Löschen des Produkts:', error);
+      alert('Fehler beim Löschen des Produkts. Bitte versuchen Sie es erneut.');
     }
   };
+
+  if (loading) return <div>Laden...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="container mx-auto px-4 py-8 mt-24">
@@ -58,6 +70,10 @@ export default function Products() {
                   layout="fill"
                   objectFit="cover"
                   className="rounded-lg"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/placeholder-image.jpg'; // Ersetzen Sie dies durch den Pfad zu einem Platzhalterbild
+                  }}
                 />
               </div>
             )}

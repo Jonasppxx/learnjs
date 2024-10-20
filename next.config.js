@@ -10,6 +10,12 @@ const nextConfig = {
         port: '',
         pathname: '/storage/v1/object/public/images/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'img.comc.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 }

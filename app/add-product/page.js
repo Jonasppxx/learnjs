@@ -32,13 +32,18 @@ export default function AddProduct() {
       if (items[i].kind === 'string' && items[i].type.match('^text/plain')) {
         items[i].getAsString(async (url) => {
           try {
-            const response = await fetch(url);
+            const proxyUrl = `/api/proxy?url=${encodeURIComponent(url)}`;
+            const response = await fetch(proxyUrl);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const blob = await response.blob();
             const file = new File([blob], 'image.jpg', { type: blob.type });
             setImage(file);
             setPreviewUrl(URL.createObjectURL(file));
           } catch (error) {
             console.error('Fehler beim Laden des Bildes:', error);
+            alert('Fehler beim Laden des Bildes. Bitte versuchen Sie es erneut.');
           }
         });
       }
