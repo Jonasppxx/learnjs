@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
@@ -11,7 +11,16 @@ export default function AddProduct() {
   const [price, setPrice] = useState('');
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    const authStatus = localStorage.getItem('isAuthenticated');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const onDrop = useCallback(async (acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -120,6 +129,36 @@ export default function AddProduct() {
       return null;
     }
   };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      localStorage.setItem('isAuthenticated', 'true');
+    } else {
+      alert('Falsches Passwort');
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md">
+          <h2 className="text-2xl mb-4">Admin-Bereich</h2>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Passwort eingeben"
+            className="w-full p-2 mb-4 border rounded"
+          />
+          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+            Einloggen
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 mt-24">

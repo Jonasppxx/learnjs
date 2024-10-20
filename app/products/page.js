@@ -9,10 +9,21 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
-    fetchProducts();
+    const authStatus = localStorage.getItem('isAuthenticated');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
+    }
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchProducts();
+    }
+  }, [isAuthenticated]);
 
   const fetchProducts = async () => {
     try {
@@ -20,7 +31,7 @@ export default function Products() {
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .order('id', { ascending: false })  // Ändern Sie 'id' zu einer vorhandenen Spalte
+        .order('id', { ascending: false })
         .limit(100);
   
       if (error) throw error;
@@ -48,6 +59,36 @@ export default function Products() {
     }
   };
 
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      localStorage.setItem('isAuthenticated', 'true');
+    } else {
+      alert('Falsches Passwort');
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md">
+          <h2 className="text-2xl mb-4">Admin-Bereich</h2>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Passwort eingeben"
+            className="w-full p-2 mb-4 border rounded"
+          />
+          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+            Einloggen
+          </button>
+        </form>
+      </div>
+    );
+  }
+
   if (loading) return <div>Laden...</div>;
   if (error) return <div>{error}</div>;
 
@@ -72,7 +113,7 @@ export default function Products() {
                   className="rounded-lg"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/placeholder-image.jpg'; // Ersetzen Sie dies durch den Pfad zu einem Platzhalterbild
+                    e.target.src = '/placeholder-image.jpg';
                   }}
                 />
               </div>
