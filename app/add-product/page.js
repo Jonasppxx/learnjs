@@ -5,6 +5,7 @@ import { useDropzone } from 'react-dropzone';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Papa from 'papaparse';
 
 export default function AddProduct() {
   const [name, setName] = useState('');
@@ -13,6 +14,8 @@ export default function AddProduct() {
   const [previewUrl, setPreviewUrl] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [csvData, setCsvData] = useState([]);
+  const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -25,8 +28,18 @@ export default function AddProduct() {
   const onDrop = useCallback(async (acceptedFiles) => {
     const file = acceptedFiles[0];
     if (file) {
-      setImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
+      if (file.type === 'text/csv') {
+        Papa.parse(file, {
+          complete: (result) => {
+            setCsvData(result.data.slice(1)); // Ignoriere die Kopfzeile
+            setCurrentProductIndex(0);
+          },
+          header: true
+        });
+      } else {
+        setImage(file);
+        setPreviewUrl(URL.createObjectURL(file));
+      }
     }
   }, []);
 
@@ -62,6 +75,7 @@ export default function AddProduct() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
     onDrop,
     accept: {
+      'text/csv': ['.csv'],
       'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp']
     },
     maxFiles: 1
@@ -70,31 +84,59 @@ export default function AddProduct() {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    if (!name.trim()) {
-      alert('Bitte geben Sie einen Produktnamen ein.');
-      return;
-    }
-  
-    const priceValue = parseFloat(price);
-    if (isNaN(priceValue) || priceValue <= 0) {
-      alert('Bitte geben Sie einen gültigen Preis ein.');
-      return;
-    }
-  
-    const imagePath = image ? await uploadImage(image) : null;
-  
-    console.log('Versuche, Produkt hinzuzufügen:', { name, price: priceValue, image: imagePath });
-  
-    const { data, error } = await supabase
-      .from('products')
-      .insert([{ name, price: priceValue, image: imagePath }]);
-  
-    if (error) {
-      console.error('Fehler beim Hinzufügen des Produkts:', error);
-      alert(`Fehler beim Hinzufügen des Produkts: ${error.message}`);
+    if (csvData.length > 0) {
+      const currentProduct = csvData[currentProductIndex];
+      const imagePath = image ? await uploadImage(image) : null;
+      
+      const { data, error } = await supabase
+        .from('products')
+        .insert([{ 
+          name: currentProduct.name, 
+          price: parseFloat(currentProduct.price), 
+          image: imagePath 
+        }]);
+
+      if (error) {
+        console.error('Fehler beim Hinzufügen des Produkts:', error);
+        alert(`Fehler beim Hinzufügen des Produkts: ${error.message}`);
+      } else {
+        console.log('Produkt erfolgreich hinzugefügt:', data);
+        if (currentProductIndex < csvData.length - 1) {
+          setCurrentProductIndex(currentProductIndex + 1);
+          setImage(null);
+          setPreviewUrl('');
+        } else {
+          alert('Alle Produkte wurden erfolgreich hinzugefügt!');
+          router.push('/products');
+        }
+      }
     } else {
-      console.log('Produkt erfolgreich hinzugefügt:', data);
-      router.push('/products');
+      if (!name.trim()) {
+        alert('Bitte geben Sie einen Produktnamen ein.');
+        return;
+      }
+    
+      const priceValue = parseFloat(price);
+      if (isNaN(priceValue) || priceValue <= 0) {
+        alert('Bitte geben Sie einen gültigen Preis ein.');
+        return;
+      }
+    
+      const imagePath = image ? await uploadImage(image) : null;
+    
+      console.log('Versuche, Produkt hinzuzufügen:', { name, price: priceValue, image: imagePath });
+    
+      const { data, error } = await supabase
+        .from('products')
+        .insert([{ name, price: priceValue, image: imagePath }]);
+    
+      if (error) {
+        console.error('Fehler beim Hinzufügen des Produkts:', error);
+        alert(`Fehler beim Hinzufügen des Produkts: ${error.message}`);
+      } else {
+        console.log('Produkt erfolgreich hinzugefügt:', data);
+        router.push('/products');
+      }
     }
   };
 
@@ -168,53 +210,85 @@ export default function AddProduct() {
           Zurück zur Übersicht
         </Link>
       </div>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="name" className="block mb-2">Name:</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label htmlFor="price" className="block mb-2">Preis (CHF):</label>
-          <input
-            type="number"
-            id="price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-            step="0.01"
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div>
-          <label className="block mb-2">Bild:</label>
-          <div 
-            {...getRootProps()} 
-            onDragOver={onDragOver}
-            onDrop={onExternalDrop}
-            className="border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer"
-          >
-            <input {...getInputProps()} />
-            {isDragActive ? (
-              <p>Lassen Sie das Bild hier fallen ...</p>
-            ) : (
-              <p>Ziehen Sie ein Bild hierher oder klicken Sie, um ein Bild auszuwählen</p>
+      {csvData.length > 0 ? (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <h2 className="text-xl font-semibold">
+            Produkt {currentProductIndex + 1} von {csvData.length}
+          </h2>
+          <p>Name: {csvData[currentProductIndex].name}</p>
+          <p>Preis: {csvData[currentProductIndex].price} CHF</p>
+          <div>
+            <label className="block mb-2">Bild:</label>
+            <div 
+              {...getRootProps()} 
+              onDragOver={onDragOver}
+              onDrop={onExternalDrop}
+              className="border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer"
+            >
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <p>Lassen Sie das Bild hier fallen ...</p>
+              ) : (
+                <p>Ziehen Sie ein Bild hierher oder klicken Sie, um ein Bild auszuwählen</p>
+              )}
+            </div>
+            {previewUrl && (
+              <img src={previewUrl} alt="Vorschau" className="mt-4 max-w-full h-auto" />
             )}
           </div>
-          {previewUrl && (
-            <img src={previewUrl} alt="Vorschau" className="mt-4 max-w-full h-auto" />
-          )}
-        </div>
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-          Produkt hinzufügen
-        </button>
-      </form>
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            {currentProductIndex < csvData.length - 1 ? 'Nächstes Produkt' : 'Alle Produkte hinzufügen'}
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block mb-2">Name:</label>
+            <input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <div>
+            <label htmlFor="price" className="block mb-2">Preis (CHF):</label>
+            <input
+              type="number"
+              id="price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              required
+              step="0.01"
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <div>
+            <label className="block mb-2">Bild oder CSV-Datei:</label>
+            <div 
+              {...getRootProps()} 
+              onDragOver={onDragOver}
+              onDrop={onExternalDrop}
+              className="border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer"
+            >
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <p>Lassen Sie die Datei hier fallen ...</p>
+              ) : (
+                <p>Ziehen Sie ein Bild oder eine CSV-Datei hierher oder klicken Sie, um eine Datei auszuwählen</p>
+              )}
+            </div>
+            {previewUrl && (
+              <img src={previewUrl} alt="Vorschau" className="mt-4 max-w-full h-auto" />
+            )}
+          </div>
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Produkt hinzufügen
+          </button>
+        </form>
+      )}
     </div>
   );
 }
