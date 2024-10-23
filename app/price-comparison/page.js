@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 
 export default function PriceComparison() {
-  const [visibleItems, setVisibleItems] = useState([]);
-  const [hiddenItems, setHiddenItems] = useState([]);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,7 +14,7 @@ export default function PriceComparison() {
 
   useEffect(() => {
     fetchItems();
-  }, [currentPage, itemsPerPage, sortField, sortOrder]);
+  }, [sortField, sortOrder]);
 
   const fetchItems = async () => {
     try {
@@ -23,12 +22,10 @@ export default function PriceComparison() {
       const { data, error } = await supabase
         .from('pokemon_price_comparison')
         .select('*')
-        .order(sortField, { ascending: sortOrder === 'asc' })
-        .range((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage - 1);
+        .order(sortField, { ascending: sortOrder === 'asc' });
 
       if (error) throw error;
-      setVisibleItems(data.filter(item => !item.hiden));
-      setHiddenItems(data.filter(item => item.hiden));
+      setItems(data);
     } catch (error) {
       console.error('Fehler beim Abrufen der Daten:', error);
       setError('Fehler beim Laden der Daten. Bitte versuchen Sie es später erneut.');
@@ -46,7 +43,9 @@ export default function PriceComparison() {
 
       if (error) throw error;
       
-      await fetchItems();
+      setItems(items.map(item => 
+        item.id === id ? { ...item, hiden: !currentHiddenState } : item
+      ));
     } catch (error) {
       console.error('Fehler beim Aktualisieren des Elements:', error);
     }
@@ -62,14 +61,24 @@ export default function PriceComparison() {
   };
 
   const openAllLinks = () => {
-    visibleItems.forEach(item => {
+    getCurrentPageItems().forEach(item => {
       window.open(item.original_link, '_blank');
       window.open(item.found_link, '_blank');
     });
   };
 
+  const getCurrentPageItems = () => {
+    const visibleItems = items.filter(item => !item.hiden);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return visibleItems.slice(startIndex, startIndex + itemsPerPage);
+  };
+
+  const pageCount = Math.ceil(items.filter(item => !item.hiden).length / itemsPerPage);
+
   if (loading) return <div className="container mx-auto px-4 py-8">Laden...</div>;
   if (error) return <div className="container mx-auto px-4 py-8">{error}</div>;
+
+  const hiddenItems = items.filter(item => item.hiden);
 
   const renderTable = (items, isHidden) => (
     <table className="min-w-full bg-white border border-gray-300">
@@ -123,7 +132,10 @@ export default function PriceComparison() {
         <select
           id="itemsPerPage"
           value={itemsPerPage}
-          onChange={(e) => setItemsPerPage(Number(e.target.value))}
+          onChange={(e) => {
+            setItemsPerPage(Number(e.target.value));
+            setCurrentPage(1);
+          }}
           className="border rounded p-1"
         >
           <option value={10}>10</option>
@@ -134,12 +146,12 @@ export default function PriceComparison() {
           onClick={openAllLinks}
           className="ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
         >
-          Alle Links öffnen
+          Alle sichtbaren Links öffnen
         </button>
       </div>
       <h2 className="text-2xl font-bold mb-4">Sichtbare Elemente</h2>
-      {renderTable(visibleItems, false)}
-      <div className="mt-4 flex justify-between">
+      {renderTable(getCurrentPageItems(), false)}
+      <div className="mt-4 flex justify-between items-center">
         <button
           onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
@@ -147,9 +159,10 @@ export default function PriceComparison() {
         >
           Vorherige
         </button>
-        <span>Seite {currentPage}</span>
+        <span>Seite {currentPage} von {pageCount}</span>
         <button
-          onClick={() => setCurrentPage(prev => prev + 1)}
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, pageCount))}
+          disabled={currentPage === pageCount}
           className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
         >
           Nächste
