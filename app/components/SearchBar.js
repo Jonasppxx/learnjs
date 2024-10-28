@@ -20,9 +20,9 @@ const SearchBar = () => {
     <div className="relative w-full max-w-md flex items-center"> {/* Flex-Container für die Lupe und das Eingabefeld */}
       <button
         onClick={() => setIsOpen(!isOpen)} // Toggle für das Eingabefeld
-        className={`flex items-center justify-center bg-gray-700 text-white transition-all duration-300 ${isOpen ? 'w-12' : 'w-10 h-10'}`} // Quadratische Form, wenn eingefahren
+        className={`flex items-center justify-center text-black transition-all duration-300 ${isOpen ? 'w-12' : 'w-10 h-10'}`} // Quadratische Form, wenn eingefahren
       >
-        <FaSearch className="text-lg" />
+        <FaSearch className="text-lg text-black" /> {/* Setzen Sie die Farbe des Icons auf schwarz */}
       </button>
       <input
         type="text"
@@ -30,7 +30,7 @@ const SearchBar = () => {
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleSearch}
         placeholder="Suche nach Produkten..."
-        className={`ml-2 p-2 rounded-md border border-gray-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ease-in-out ${isOpen ? 'w-48 opacity-100' : 'w-0 opacity-0'}`} // Breite und Opazität für den Übergang
+        className={`rounded-md border border-gray-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ease-in-out ${isOpen ? 'w-48 opacity-100' : 'w-0 opacity-0'}`} // Breite und Opazität für den Übergang
         style={{ transition: 'width 0.3s ease-in-out, opacity 0.3s ease-in-out' }} // Animation für Breite und Opazität
       />
     </div>

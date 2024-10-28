@@ -93,9 +93,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow">
         <div className="container mx-auto px-4 py-8">
-          <div className="mb-16"></div>
-          
-          <div className="flex items-center justify-center h-screen">
+          <div className="flex items-center justify-center h-screen"> {/* Höhe des Containers verringern */}
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-center transition-opacity duration-500">
               {welcomeMessages[welcomeIndex].split(' ').map((word, index) => (
                 <span key={index} className={index === welcomeMessages[welcomeIndex].split(' ').length - 1 ? "bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text" : ""}>

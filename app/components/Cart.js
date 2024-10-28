@@ -55,14 +55,15 @@ export default function Cart() {
     <div className="relative z-50">
       <button
         onClick={toggleCart}
-        className="text-white p-2 rounded-full" // Hintergrundfarbe entfernt
+        className="text-black p-2 rounded-full"
       >
         🛒 {cart.length}
       </button>
       {isOpen && (
         <div 
           ref={cartRef} 
-          className="absolute top-0 right-0 mt-2 w-64 bg-white shadow-lg z-50 p-4 rounded-lg"
+          className="absolute -right-4 mt-4 w-64 bg-white text-black shadow-lg z-50 p-4 rounded-lg transform transition-transform duration-300 ease-in-out" 
+          style={{ transform: 'translateY(0)', opacity: 1 }} // Position und Opazität für die Animation
         >
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-gray-800">Warenkorb</h2>
