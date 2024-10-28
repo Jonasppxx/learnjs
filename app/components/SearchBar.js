@@ -1,16 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
+import { FaSearch } from 'react-icons/fa'; // Importieren Sie das Lupe-Symbol
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
+  const [isOpen, setIsOpen] = useState(false); // Zustand für die Sichtbarkeit des Eingabefelds
 
   const handleSearch = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      // Hier können Sie die Logik für die Suche implementieren
-      console.log('Suchanfrage:', query);
-      // Beispiel: Weiterleitung zur Suchseite mit der Abfrage
       if (query) {
         window.location.href = `/search?q=${encodeURIComponent(query)}`;
       }
@@ -18,23 +17,22 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="relative w-full max-w-md">
+    <div className="relative w-full max-w-md flex items-center"> {/* Flex-Container für die Lupe und das Eingabefeld */}
+      <button
+        onClick={() => setIsOpen(!isOpen)} // Toggle für das Eingabefeld
+        className={`flex items-center justify-center bg-gray-700 text-white transition-all duration-300 ${isOpen ? 'w-12' : 'w-10 h-10'}`} // Quadratische Form, wenn eingefahren
+      >
+        <FaSearch className="text-lg" />
+      </button>
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={handleSearch} // Verwenden Sie onKeyDown, um die Enter-Taste zu erkennen
+        onKeyDown={handleSearch}
         placeholder="Suche nach Produkten..."
-        className="w-full p-3 rounded-md border border-gray-300 bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+        className={`ml-2 p-2 rounded-md border border-gray-300 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ease-in-out ${isOpen ? 'w-48 opacity-100' : 'w-0 opacity-0'}`} // Breite und Opazität für den Übergang
+        style={{ transition: 'width 0.3s ease-in-out, opacity 0.3s ease-in-out' }} // Animation für Breite und Opazität
       />
-      <style jsx>{`
-        input {
-          transition: background-color 0.3s ease;
-        }
-        input:focus {
-          background-color: white;
-        }
-      `}</style>
     </div>
   );
 };

@@ -55,7 +55,7 @@ export default function Cart() {
     <div className="relative z-50">
       <button
         onClick={toggleCart}
-        className="bg-blue-500 text-white p-2 rounded-full shadow-lg"
+        className="text-white p-2 rounded-full" // Hintergrundfarbe entfernt
       >
         🛒 {cart.length}
       </button>
