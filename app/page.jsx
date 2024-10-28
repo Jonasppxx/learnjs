@@ -21,8 +21,6 @@ const cardProperties = [
 export default function Home() {
   const [singles, setSingles] = useState([]);
   const [sealedProducts, setSealedProducts] = useState([]);
-  const [featuredCard, setFeaturedCard] = useState(null);
-  const [expensiveCard, setExpensiveCard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [productsPerRow, setProductsPerRow] = useState(4);
@@ -80,35 +78,6 @@ export default function Home() {
         if (sealedError) throw sealedError;
         setSealedProducts(sealedData);
 
-        const { data: allProducts, error: allProductsError } = await supabase
-          .from('singles')
-          .select('*')
-          .limit(100);
-
-        if (allProductsError) throw allProductsError;
-
-        const randomProduct = allProducts[Math.floor(Math.random() * allProducts.length)];
-        const randomQuote = pokemonQuotes[Math.floor(Math.random() * pokemonQuotes.length)];
-        
-        setFeaturedCard({
-          ...randomProduct,
-          quote: randomQuote,
-          properties: cardProperties.reduce((acc, prop) => {
-            acc[prop] = Math.floor(Math.random() * 100);
-            return acc;
-          }, {})
-        });
-
-        const { data: expensiveData, error: expensiveError } = await supabase
-          .from('singles')
-          .select('*')
-          .order('price', { ascending: false })
-          .limit(1)
-          .single();
-
-        if (expensiveError) throw expensiveError;
-        setExpensiveCard(expensiveData);
-
       } catch (error) {
         console.error('Error fetching products:', error);
         setError('Fehler beim Laden der Produkte. Bitte versuchen Sie es später erneut.');
@@ -126,8 +95,8 @@ export default function Home() {
         <div className="container mx-auto px-4 py-8">
           <div className="mb-16"></div>
           
-          <div className="text-center mb-12">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold transition-opacity duration-500 whitespace-nowrap">
+          <div className="flex items-center justify-center h-screen">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-center transition-opacity duration-500">
               {welcomeMessages[welcomeIndex].split(' ').map((word, index) => (
                 <span key={index} className={index === welcomeMessages[welcomeIndex].split(' ').length - 1 ? "bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text" : ""}>
                   {word}{' '}
@@ -136,92 +105,10 @@ export default function Home() {
             </h1>
           </div>
         </div>
-        
-        {featuredCard && (
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-6 mb-8">
-            <div className="container mx-auto px-4">
-              <div className="flex flex-col md:flex-row items-center">
-                <div className="w-full md:w-1/3 mb-4 md:mb-0">
-                  <div className="relative w-48 h-64 mx-auto">
-                    <Image 
-                      src={featuredCard.main_image} 
-                      alt={featuredCard.name} 
-                      layout="fill"
-                      objectFit="contain"
-                      className="rounded-lg"
-                      placeholder="blur"
-                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
-                    />
-                  </div>
-                </div>
-                <div className="w-full md:w-2/3 md:pl-6 text-center md:text-left">
-                  <h2 className="text-2xl font-bold mb-2">{featuredCard.name}</h2>
-                  <p className="text-lg italic mb-4">"{featuredCard.quote}"</p>
-                  <p className="mb-4">{featuredCard.description}</p>
-                  <p className="text-xl font-bold mb-4">{featuredCard.price.toFixed(2)} CHF</p>
-                  <Link href={`/singles/${featuredCard.id}`} className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-2 px-4 rounded transition duration-300">
-                    Produkt ansehen
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        
+
         <div className="container mx-auto px-4">
           <ProductSection title="Singles" products={singles} type="singles" addToCart={addToCart} isInCart={isInCart} isLoading={loading} />
           <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" addToCart={addToCart} isInCart={isInCart} isLoading={loading} />
-        </div>
-
-        {expensiveCard && (
-          <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white py-6 mt-16">
-            <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold mb-6 text-center">Unsere Empfehlung</h2>
-              <div className="flex flex-col md:flex-row items-center">
-                <div className="w-full md:w-1/3 mb-4 md:mb-0">
-                  <div className="relative w-48 h-64 mx-auto perspective-1000">
-                    <div className="w-full h-full transition-transform duration-300 transform-style-3d hover:rotate-y-10 hover:scale-105">
-                      <Image 
-                        src={expensiveCard.main_image} 
-                        alt={expensiveCard.name} 
-                        layout="fill" 
-                        objectFit="contain" 
-                        className="rounded-lg"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full md:w-2/3 md:pl-6 text-center md:text-left">
-                  <h3 className="text-2xl font-bold mb-2">{expensiveCard.name}</h3>
-                  <p className="mb-4">{expensiveCard.description}</p>
-                  <p className="text-xl font-bold mb-4">{expensiveCard.price.toFixed(2)} CHF</p>
-                  <Link href={`/singles/${expensiveCard.id}`} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-                    Produkt ansehen
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-      
-      <div className="bg-gray-100 py-4 w-full">
-        <div className="container mx-auto px-4">
-          <a 
-            href="https://www.ricardo.ch/de/shop/J0B0/offers/" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="flex items-center justify-center bg-white border border-gray-300 rounded-lg px-6 py-4 hover:bg-gray-50 transition duration-300"
-          >
-            <Image 
-              src="/logo.png" 
-              alt="Pokebuy Logo" 
-              width={40} 
-              height={40} 
-              className="mr-3"
-            />
-            <span className="text-lg font-semibold leading-none">Besuchen Sie unseren Ricardo-Shop</span>
-          </a>
         </div>
       </div>
     </div>
@@ -318,7 +205,7 @@ function ProductSection({ title, products, type, addToCart, isInCart, isLoading 
                 {isInCart(product.id, type) ? '✓' : '+'}
               </button>
             </div>
-          ))}
+          ))} 
         </div>
       )}
     </section>
