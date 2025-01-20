@@ -107,6 +107,33 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <ProductSection title="Singles" products={singles} type="singles" addToCart={addToCart} isInCart={isInCart} isLoading={loading} />
           <ProductSection title="Sealed Products" products={sealedProducts} type="sealed" addToCart={addToCart} isInCart={isInCart} isLoading={loading} />
+          
+          {/* Blog Section */}
+          <section className="mb-12 bg-gradient-to-r from-blue-50 to-purple-50 p-8 rounded-lg">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl font-bold mb-4">Entdecke spannende Rankings</h2>
+              <p className="text-gray-600 mb-6">
+                Tauche ein in faszinierende Top-Listen und Rankings: Von den wertvollsten Gemälden der Welt 
+                bis zu den seltensten Pokémon-Karten aller Zeiten. Erfahre mehr auf unserem Blog!
+              </p>
+              <div className="space-y-2 mb-6 text-left">
+                <p className="text-gray-700">• Top 10 wertvollste Gemälde der Geschichte</p>
+                <p className="text-gray-700">• Die seltensten Pokémon-Karten weltweit</p>
+                <p className="text-gray-700">• Interessante Sammlerstücke und ihre Geschichte</p>
+              </div>
+              <a 
+                href="https://numera.blog" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition duration-300"
+              >
+                Zum Blog
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            </div>
+          </section>
         </div>
       </div>
     </div>
